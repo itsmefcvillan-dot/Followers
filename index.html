@@ -113,7 +113,7 @@
       padding: 20px;
     }
 
-    /* Main Showcase Card (Free Plan & Active Timer) */
+    /* Main Showcase Card */
     .main-card {
       background: var(--card-bg);
       backdrop-filter: blur(16px);
@@ -199,11 +199,11 @@
     }
 
     .timer-display {
-      font-size: 2rem;
+      font-size: 1.8rem;
       font-weight: 800;
       color: var(--secondary);
       font-family: monospace;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
     }
 
     /* Other Plans Button */
@@ -316,7 +316,7 @@
       line-height: 1.5;
     }
 
-    /* Modal (Popup for Other Plans) */
+    /* Modal */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -392,26 +392,26 @@
   <header>
     <div class="badge"><i class="fa-solid fa-bolt"></i> Instant Growth</div>
     <h1>MS Followers</h1>
-    <p class="subtitle">Claim your daily free followers or unlock instant premium packages!</p>
+    <p class="subtitle">Claim 100 free followers every week or unlock instant premium packages!</p>
   </header>
 
   <div class="container">
     
-    <!-- Main Highlighted Free Card -->
+    <!-- Main Showcase Card -->
     <div class="main-card active-selected" id="mainCard" onclick="selectFreePlan()">
       <div class="icon"><i class="fa-solid fa-gift"></i></div>
       <div class="tag">FREE TRIAL PACK</div>
       <h2>100 FREE Followers</h2>
-      <p style="color: var(--text-muted); font-size: 0.9rem;">Available once every 24 hours per user.</p>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">1 Claim per Username every 7 days.</p>
       
       <div>
         <span class="btn-select-free"><i class="fa-solid fa-check-circle"></i> Select Free Pack</span>
       </div>
 
-      <!-- Live 24-Hour Timer -->
+      <!-- Live 7-Day Timer -->
       <div class="timer-box" id="timerBox">
         <div class="timer-title"><i class="fa-solid fa-clock"></i> Next Free Claim Available In:</div>
-        <div class="timer-display" id="timerDisplay">23:59:59</div>
+        <div class="timer-display" id="timerDisplay">6d 23h 59m 59s</div>
       </div>
     </div>
 
@@ -498,6 +498,9 @@
 
   <script>
     const DISCORD_WEBHOOK_URL = "https://canary.discord.com/api/webhooks/1530479431347339415/9kdSYUvN-xavZMPB3p0a0wftd0AhWB-GX5d5iSNsV5fn_rGfGd100QlZbAGXJ5SHuTrl";
+    
+    // Free Key-Value Storage Bucket for tracking usernames globally
+    const KVDB_BUCKET_URL = "https://kvdb.io/4y7cM3v8QZ1nJ9K2L4P1aB";
 
     let currentPlanName = "100 Followers (FREE)";
     let currentPlanPrice = "₹0";
@@ -506,7 +509,6 @@
     function openModal() { document.getElementById('plansModal').style.display = 'flex'; }
     function closeModal() { document.getElementById('plansModal').style.display = 'none'; }
 
-    // Select Free Plan Function
     function selectFreePlan() {
       currentPlanName = "100 Followers (FREE)";
       currentPlanPrice = "₹0";
@@ -516,7 +518,6 @@
       document.getElementById('statusMsg').style.display = 'none';
     }
 
-    // Select Paid Plan Function
     function selectPaidPlan(name, price) {
       currentPlanName = name;
       currentPlanPrice = price;
@@ -535,71 +536,104 @@
       document.getElementById('statusMsg').style.display = 'none';
     }
 
-    // 24-Hour Timer System
-    function updateTimerDisplay() {
-      const lastClaim = localStorage.getItem('ms_followers_free_claim');
+    // 1-Week (7-Day) Timer System
+    function updateTimerDisplay(lastClaimTime) {
       const timerBox = document.getElementById('timerBox');
       const timerDisplay = document.getElementById('timerDisplay');
-      
-      if (!lastClaim) {
-        timerBox.style.display = 'none';
-        return false;
-      }
 
       const now = Date.now();
-      const cooldownMs = 24 * 60 * 60 * 1000;
-      const timeRemaining = (parseInt(lastClaim, 10) + cooldownMs) - now;
+      const cooldownMs = 7 * 24 * 60 * 60 * 1000; // 7 Days in Milliseconds
+      const timeRemaining = (lastClaimTime + cooldownMs) - now;
 
       if (timeRemaining <= 0) {
-        localStorage.removeItem('ms_followers_free_claim');
         timerBox.style.display = 'none';
-        clearInterval(timerInterval);
+        if (timerInterval) clearInterval(timerInterval);
         return false;
       }
 
-      const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+      const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
 
-      timerDisplay.innerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      timerDisplay.innerText = `${days}d ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
       timerBox.style.display = 'block';
       return true;
     }
 
-    function startLiveTimer() {
-      if (updateTimerDisplay()) {
+    function startLiveTimer(claimTimestamp) {
+      if (updateTimerDisplay(claimTimestamp)) {
         if (timerInterval) clearInterval(timerInterval);
-        timerInterval = setInterval(updateTimerDisplay, 1000);
+        timerInterval = setInterval(() => updateTimerDisplay(claimTimestamp), 1000);
       }
     }
 
-    window.onload = function() {
-      startLiveTimer();
-    };
+    // Clean username format (lowercase, no @ symbol)
+    function sanitizeUsername(user) {
+      return user.toLowerCase().replace(/[^a-z0-9._]/g, '');
+    }
+
+    // Check if username has claimed in the last 7 days
+    async function getUsernameClaimTime(username) {
+      const cleanUser = sanitizeUsername(username);
+      try {
+        const res = await fetch(`${KVDB_BUCKET_URL}/${cleanUser}`);
+        if (res.ok) {
+          const timestampStr = await res.text();
+          return parseInt(timestampStr, 10);
+        }
+      } catch (err) {
+        console.error("Database check failed", err);
+      }
+      return null;
+    }
+
+    // Save username claim timestamp globally
+    async function saveUsernameClaimTime(username, timestamp) {
+      const cleanUser = sanitizeUsername(username);
+      try {
+        await fetch(`${KVDB_BUCKET_URL}/${cleanUser}`, {
+          method: "POST",
+          body: timestamp.toString()
+        });
+      } catch (err) {
+        console.error("Database write failed", err);
+      }
+    }
 
     async function handleOrderSubmit(e) {
       e.preventDefault();
 
-      const username = document.getElementById('username').value.trim();
+      const rawUsername = document.getElementById('username').value.trim();
       const customCount = document.getElementById('customCount').value;
       const submitBtn = document.getElementById('submitBtn');
       const statusMsg = document.getElementById('statusMsg');
 
-      if (!username) return;
+      if (!rawUsername) return;
 
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Checking Username...";
+
+      // Validation for Free Plan
       if (currentPlanName === '100 Followers (FREE)') {
-        const lastClaim = localStorage.getItem('ms_followers_free_claim');
-        if (lastClaim && (Date.now() - parseInt(lastClaim, 10) < 24 * 60 * 60 * 1000)) {
+        const lastClaimTime = await getUsernameClaimTime(rawUsername);
+        const cooldownMs = 7 * 24 * 60 * 60 * 1000;
+
+        if (lastClaimTime && (Date.now() - lastClaimTime < cooldownMs)) {
+          startLiveTimer(lastClaimTime);
+
           statusMsg.style.background = "rgba(255, 65, 108, 0.15)";
           statusMsg.style.border = "1px solid #ff416c";
           statusMsg.style.color = "#ff416c";
-          statusMsg.innerHTML = "⏳ <strong>Free Trial Cooling Down!</strong><br>You have already claimed free followers today. Please wait for the timer or pick a paid plan above!";
+          statusMsg.innerHTML = `⏳ <strong>Username Limit Reached!</strong><br>The username <strong>${rawUsername}</strong> has already claimed the free pack this week. Please wait for the timer or choose a paid plan!`;
           statusMsg.style.display = "block";
+
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fa-solid fa-rocket"></i> Claim Followers Now';
           return;
         }
       }
 
-      submitBtn.disabled = true;
       submitBtn.innerText = "Processing...";
 
       const embedPayload = {
@@ -610,7 +644,7 @@
             title: "🚀 New Follower Order!",
             color: 0x00f2fe,
             fields: [
-              { name: "👤 Username", value: `\`${username}\``, inline: true },
+              { name: "👤 Username", value: `\`${rawUsername}\``, inline: true },
               { name: "📦 Plan", value: currentPlanName === 'Custom Amount' ? `Custom (${customCount || 'Unspecified'})` : currentPlanName, inline: true },
               { name: "💰 Price", value: currentPlanPrice, inline: true }
             ],
@@ -628,32 +662,6 @@
         });
 
         if (response.ok) {
-          if (currentPlanName === '100 Followers (FREE)') {
-            localStorage.setItem('ms_followers_free_claim', Date.now().toString());
-            startLiveTimer();
-          }
+          const nowTimestamp = Date.now();
 
-          statusMsg.style.background = "rgba(56, 239, 125, 0.15)";
-          statusMsg.style.border = "1px solid #38ef7d";
-          statusMsg.style.color = "#38ef7d";
-          statusMsg.innerHTML = "🎉 <strong>Order Confirmed!</strong><br>Your followers are being queued and will reach your account within <strong>1 hour</strong>!";
-          statusMsg.style.display = "block";
-
-          document.getElementById('username').value = "";
-        } else {
-          throw new Error("API Error");
-        }
-      } catch (err) {
-        statusMsg.style.background = "rgba(255, 65, 108, 0.15)";
-        statusMsg.style.border = "1px solid #ff416c";
-        statusMsg.style.color = "#ff416c";
-        statusMsg.innerText = "❌ Something went wrong while submitting. Please try again.";
-        statusMsg.style.display = "block";
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fa-solid fa-rocket"></i> Claim Followers Now';
-      }
-    }
-  </script>
-</body>
-</html>
+          // Save 
