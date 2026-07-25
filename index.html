@@ -119,12 +119,24 @@
       backdrop-filter: blur(16px);
       border: 2px solid var(--primary-glow);
       border-radius: 24px;
-      padding: 35px 25px;
+      padding: 30px 25px;
       text-align: center;
       position: relative;
       box-shadow: 0 10px 30px rgba(138, 43, 226, 0.25);
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       animation: fadeInUp 0.8s ease-out;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .main-card:hover {
+      border-color: var(--secondary);
+      transform: translateY(-3px);
+    }
+
+    .main-card.active-selected {
+      border-color: var(--secondary);
+      box-shadow: 0 0 25px rgba(0, 242, 254, 0.4);
     }
 
     .main-card .icon {
@@ -149,6 +161,25 @@
       border-radius: 12px;
       margin-bottom: 15px;
       letter-spacing: 1px;
+    }
+
+    .btn-select-free {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(0, 242, 254, 0.3));
+      border: 1px solid var(--secondary);
+      border-radius: 12px;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+
+    .btn-select-free:hover {
+      background: var(--secondary);
+      color: #000;
     }
 
     /* Timer Styles */
@@ -274,7 +305,7 @@
       cursor: not-allowed;
     }
 
-    /* Engaging Status Box */
+    /* Status Box */
     .status-msg {
       margin-top: 20px;
       padding: 15px;
@@ -367,20 +398,24 @@
   <div class="container">
     
     <!-- Main Highlighted Free Card -->
-    <div class="main-card" id="mainCard">
+    <div class="main-card active-selected" id="mainCard" onclick="selectFreePlan()">
       <div class="icon"><i class="fa-solid fa-gift"></i></div>
       <div class="tag">FREE TRIAL PACK</div>
       <h2>100 FREE Followers</h2>
       <p style="color: var(--text-muted); font-size: 0.9rem;">Available once every 24 hours per user.</p>
+      
+      <div>
+        <span class="btn-select-free"><i class="fa-solid fa-check-circle"></i> Select Free Pack</span>
+      </div>
 
-      <!-- Live 24-Hour Timer (Appears when claimed) -->
+      <!-- Live 24-Hour Timer -->
       <div class="timer-box" id="timerBox">
         <div class="timer-title"><i class="fa-solid fa-clock"></i> Next Free Claim Available In:</div>
         <div class="timer-display" id="timerDisplay">23:59:59</div>
       </div>
     </div>
 
-    <!-- Other Plans Trigger Button -->
+    <!-- Other Plans Button -->
     <button type="button" class="btn-other-plans" onclick="openModal()">
       <i class="fa-solid fa-layer-group"></i> Explore Paid Premium Plans (1,000+)
     </button>
@@ -396,7 +431,7 @@
           <input type="text" id="selectedPlan" value="100 Followers (FREE) - ₹0" readonly style="color: var(--secondary); font-weight: 600;">
         </div>
 
-        <!-- Custom Input (Only shown if custom plan picked in modal) -->
+        <!-- Custom Input -->
         <div class="input-group" id="customGroup" style="display: none;">
           <label><i class="fa-solid fa-arrow-up-1-9"></i> Custom Followers Amount</label>
           <input type="number" id="customCount" placeholder="e.g. 15000">
@@ -413,7 +448,7 @@
           <i class="fa-solid fa-rocket"></i> Claim Followers Now
         </button>
 
-        <!-- Engaging Confirmation Status -->
+        <!-- Status Box -->
         <div id="statusMsg" class="status-msg"></div>
       </form>
     </div>
@@ -468,10 +503,20 @@
     let currentPlanPrice = "₹0";
     let timerInterval = null;
 
-    // Modal Handlers
     function openModal() { document.getElementById('plansModal').style.display = 'flex'; }
     function closeModal() { document.getElementById('plansModal').style.display = 'none'; }
 
+    // Select Free Plan Function
+    function selectFreePlan() {
+      currentPlanName = "100 Followers (FREE)";
+      currentPlanPrice = "₹0";
+      document.getElementById('selectedPlan').value = `${currentPlanName} - ${currentPlanPrice}`;
+      document.getElementById('customGroup').style.display = 'none';
+      document.getElementById('mainCard').classList.add('active-selected');
+      document.getElementById('statusMsg').style.display = 'none';
+    }
+
+    // Select Paid Plan Function
     function selectPaidPlan(name, price) {
       currentPlanName = name;
       currentPlanPrice = price;
@@ -485,6 +530,7 @@
         customGroup.style.display = 'none';
       }
 
+      document.getElementById('mainCard').classList.remove('active-selected');
       closeModal();
       document.getElementById('statusMsg').style.display = 'none';
     }
@@ -501,18 +547,16 @@
       }
 
       const now = Date.now();
-      const cooldownMs = 24 * 60 * 60 * 1000; // 24 Hours
+      const cooldownMs = 24 * 60 * 60 * 1000;
       const timeRemaining = (parseInt(lastClaim, 10) + cooldownMs) - now;
 
       if (timeRemaining <= 0) {
-        // Cooldown finished
         localStorage.removeItem('ms_followers_free_claim');
         timerBox.style.display = 'none';
         clearInterval(timerInterval);
         return false;
       }
 
-      // Format H:M:S
       const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
       const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
@@ -529,7 +573,6 @@
       }
     }
 
-    // On Page Load: Start Timer if active
     window.onload = function() {
       startLiveTimer();
     };
@@ -544,7 +587,6 @@
 
       if (!username) return;
 
-      // Check if trying to claim free plan during active cooldown
       if (currentPlanName === '100 Followers (FREE)') {
         const lastClaim = localStorage.getItem('ms_followers_free_claim');
         if (lastClaim && (Date.now() - parseInt(lastClaim, 10) < 24 * 60 * 60 * 1000)) {
@@ -586,13 +628,11 @@
         });
 
         if (response.ok) {
-          // If free plan was claimed, save timestamp & trigger timer
           if (currentPlanName === '100 Followers (FREE)') {
             localStorage.setItem('ms_followers_free_claim', Date.now().toString());
             startLiveTimer();
           }
 
-          // Engaging user-friendly confirmation message
           statusMsg.style.background = "rgba(56, 239, 125, 0.15)";
           statusMsg.style.border = "1px solid #38ef7d";
           statusMsg.style.color = "#38ef7d";
@@ -617,4 +657,3 @@
   </script>
 </body>
 </html>
-
