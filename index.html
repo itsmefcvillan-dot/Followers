@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Boost Your Followers | Instant Growth</title>
+  <title>MS Followers | Boost Your Presence</title>
   <!-- Google Fonts & FontAwesome Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -39,7 +39,7 @@
       position: relative;
     }
 
-    /* Animated Background Glowing Orbs */
+    /* Ambient Glow Orbs */
     .orb {
       position: absolute;
       border-radius: 50%;
@@ -68,10 +68,10 @@
       100% { transform: translateY(30px) scale(1.1); }
     }
 
-    /* Header Section */
+    /* Header */
     header {
       text-align: center;
-      padding: 60px 20px 30px;
+      padding: 50px 20px 20px;
       max-width: 800px;
       animation: fadeInDown 1s ease-out;
     }
@@ -98,121 +98,126 @@
       background: linear-gradient(135deg, #ffffff 30%, var(--secondary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
     }
 
     p.subtitle {
       color: var(--text-muted);
-      font-size: 1.1rem;
+      font-size: 1.05rem;
     }
 
-    /* Main Container */
+    /* Main Display Container */
     .container {
       width: 100%;
-      max-width: 1100px;
-      padding: 0 20px 60px;
+      max-width: 650px;
+      padding: 20px;
     }
 
-    /* Package Cards Grid */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 25px;
-      margin-top: 30px;
-    }
-
-    .card {
+    /* Main Showcase Card (Free Plan & Active Timer) */
+    .main-card {
       background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 30px 20px;
+      backdrop-filter: blur(16px);
+      border: 2px solid var(--primary-glow);
+      border-radius: 24px;
+      padding: 35px 25px;
       text-align: center;
       position: relative;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      cursor: pointer;
-      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(138, 43, 226, 0.25);
+      margin-bottom: 25px;
+      animation: fadeInUp 0.8s ease-out;
     }
 
-    .card:hover {
-      transform: translateY(-10px);
-      border-color: var(--primary-glow);
-      box-shadow: 0 10px 30px rgba(138, 43, 226, 0.3);
-    }
-
-    .card.selected {
-      border: 2px solid var(--secondary);
-      background: rgba(0, 242, 254, 0.08);
-      box-shadow: 0 0 25px rgba(0, 242, 254, 0.4);
-    }
-
-    .card .icon {
-      font-size: 2.5rem;
+    .main-card .icon {
+      font-size: 3rem;
       color: var(--secondary);
-      margin-bottom: 15px;
-      transition: transform 0.3s ease;
+      margin-bottom: 10px;
     }
 
-    .card:hover .icon {
-      transform: scale(1.15) rotate(5deg);
-    }
-
-    .card h3 {
-      font-size: 1.8rem;
-      font-weight: 700;
+    .main-card h2 {
+      font-size: 2.2rem;
+      font-weight: 800;
       margin-bottom: 5px;
     }
 
-    .card .price {
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: #38ef7d;
-      margin-top: 10px;
-    }
-
-    .card .free-tag {
-      color: #ff416c;
-      font-weight: 700;
-    }
-
-    .tag-popular {
-      position: absolute;
-      top: 15px;
-      right: -30px;
-      background: linear-gradient(45deg, #ff416c, #ff4b2b);
+    .main-card .tag {
+      display: inline-block;
+      background: #ff416c;
       color: white;
-      font-size: 0.7rem;
+      font-size: 0.8rem;
       font-weight: 700;
-      padding: 4px 30px;
-      transform: rotate(45deg);
-      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 12px;
+      margin-bottom: 15px;
       letter-spacing: 1px;
     }
 
-    /* Checkout & Details Section */
+    /* Timer Styles */
+    .timer-box {
+      display: none;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px dashed var(--secondary);
+      border-radius: 16px;
+      padding: 15px;
+      margin-top: 15px;
+    }
+
+    .timer-title {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .timer-display {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--secondary);
+      font-family: monospace;
+      letter-spacing: 2px;
+    }
+
+    /* Other Plans Button */
+    .btn-other-plans {
+      width: 100%;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      color: var(--secondary);
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .btn-other-plans:hover {
+      background: rgba(0, 242, 254, 0.1);
+      border-color: var(--secondary);
+      transform: translateY(-2px);
+    }
+
+    /* Order Form */
     .order-section {
-      margin-top: 50px;
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--card-border);
       backdrop-filter: blur(16px);
       border-radius: 24px;
-      padding: 40px 30px;
-      max-width: 650px;
-      margin-left: auto;
-      margin-right: auto;
+      padding: 35px 25px;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-      animation: fadeInUp 1s ease-out;
     }
 
-    .order-section h2 {
-      font-size: 1.8rem;
+    .order-section h3 {
+      font-size: 1.5rem;
       text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
 
     .input-group {
       margin-bottom: 20px;
-      position: relative;
     }
 
     .input-group label {
@@ -222,7 +227,7 @@
       margin-bottom: 8px;
     }
 
-    .input-group input, .input-group select {
+    .input-group input {
       width: 100%;
       padding: 16px 20px;
       background: rgba(0, 0, 0, 0.4);
@@ -234,12 +239,11 @@
       transition: border 0.3s ease;
     }
 
-    .input-group input:focus, .input-group select:focus {
+    .input-group input:focus {
       border-color: var(--secondary);
       box-shadow: 0 0 12px rgba(0, 242, 254, 0.3);
     }
 
-    /* Submit Button */
     .btn-submit {
       width: 100%;
       padding: 18px;
@@ -266,114 +270,139 @@
     }
 
     .btn-submit:disabled {
-      opacity: 0.6;
+      opacity: 0.5;
       cursor: not-allowed;
     }
 
-    /* Alert Message */
+    /* Engaging Status Box */
     .status-msg {
-      margin-top: 15px;
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 12px;
       text-align: center;
       font-weight: 600;
       display: none;
+      line-height: 1.5;
     }
 
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-30px); }
-      to { opacity: 1; transform: translateY(0); }
+    /* Modal (Popup for Other Plans) */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
     }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
+
+    .modal-content {
+      background: #0f111a;
+      border: 1px solid var(--primary-glow);
+      border-radius: 24px;
+      padding: 30px 20px;
+      max-width: 700px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
     }
+
+    .close-modal {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .plan-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .plan-card:hover {
+      border-color: var(--secondary);
+      transform: translateY(-5px);
+      background: rgba(0, 242, 254, 0.05);
+    }
+
+    .plan-card h4 { font-size: 1.5rem; margin-bottom: 5px; }
+    .plan-card .price { color: #38ef7d; font-weight: 700; font-size: 1.2rem; }
+
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
 
-  <!-- Background Orbs -->
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
 
   <!-- Header -->
   <header>
-    <div class="badge"><i class="fa-solid fa-bolt"></i> Instant Delivery</div>
-    <h1>Elevate Your Social Presence</h1>
-    <p class="subtitle">Select a package or start with 100 followers completely free!</p>
+    <div class="badge"><i class="fa-solid fa-bolt"></i> Instant Growth</div>
+    <h1>MS Followers</h1>
+    <p class="subtitle">Claim your daily free followers or unlock instant premium packages!</p>
   </header>
 
-  <!-- Main Content -->
   <div class="container">
     
-    <!-- Pricing Cards Grid -->
-    <div class="grid">
-      <!-- 100 Free -->
-      <div class="card selected" onclick="selectPackage('100 Followers (FREE)', '₹0', this)">
-        <div class="icon"><i class="fa-solid fa-gift"></i></div>
-        <h3>100</h3>
-        <p>Followers</p>
-        <div class="price free-tag">FREE TRIAL</div>
-      </div>
+    <!-- Main Highlighted Free Card -->
+    <div class="main-card" id="mainCard">
+      <div class="icon"><i class="fa-solid fa-gift"></i></div>
+      <div class="tag">FREE TRIAL PACK</div>
+      <h2>100 FREE Followers</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">Available once every 24 hours per user.</p>
 
-      <!-- 1000 Paid -->
-      <div class="card" onclick="selectPackage('1,000 Followers', '₹50', this)">
-        <div class="tag-popular">Popular</div>
-        <div class="icon"><i class="fa-solid fa-fire"></i></div>
-        <h3>1,000</h3>
-        <p>Followers</p>
-        <div class="price">₹50</div>
-      </div>
-
-      <!-- 2000 Paid -->
-      <div class="card" onclick="selectPackage('2,000 Followers', '₹100', this)">
-        <div class="icon"><i class="fa-solid fa-rocket"></i></div>
-        <h3>2,000</h3>
-        <p>Followers</p>
-        <div class="price">₹100</div>
-      </div>
-
-      <!-- 5000 Paid -->
-      <div class="card" onclick="selectPackage('5,000 Followers', '₹250', this)">
-        <div class="icon"><i class="fa-solid fa-crown"></i></div>
-        <h3>5,000</h3>
-        <p>Followers</p>
-        <div class="price">₹250</div>
-      </div>
-
-      <!-- 10000 Paid -->
-      <div class="card" onclick="selectPackage('10,000 Followers', '₹500', this)">
-        <div class="icon"><i class="fa-solid fa-gem"></i></div>
-        <h3>10,000</h3>
-        <p>Followers</p>
-        <div class="price">₹500</div>
-      </div>
-
-      <!-- Custom -->
-      <div class="card" onclick="selectPackage('Custom Amount', 'Custom Price', this)">
-        <div class="icon"><i class="fa-solid fa-sliders"></i></div>
-        <h3>Custom</h3>
-        <p>Followers</p>
-        <div class="price" style="color: var(--secondary);">Custom Plan</div>
+      <!-- Live 24-Hour Timer (Appears when claimed) -->
+      <div class="timer-box" id="timerBox">
+        <div class="timer-title"><i class="fa-solid fa-clock"></i> Next Free Claim Available In:</div>
+        <div class="timer-display" id="timerDisplay">23:59:59</div>
       </div>
     </div>
 
-    <!-- Form Section -->
+    <!-- Other Plans Trigger Button -->
+    <button type="button" class="btn-other-plans" onclick="openModal()">
+      <i class="fa-solid fa-layer-group"></i> Explore Paid Premium Plans (1,000+)
+    </button>
+
+    <!-- Order Submission Form -->
     <div class="order-section">
-      <h2><i class="fa-solid fa-cart-shopping"></i> Complete Your Request</h2>
+      <h3><i class="fa-solid fa-paper-plane"></i> Submit Your Order</h3>
       
-      <form id="orderForm" onsubmit="handleDiscordOrderSubmit(event)">
+      <form id="orderForm" onsubmit="handleOrderSubmit(event)">
         <!-- Selected Plan Display -->
         <div class="input-group">
           <label><i class="fa-solid fa-box-open"></i> Selected Package</label>
-          <input type="text" id="selectedPlan" value="100 Followers (FREE) - ₹0" readonly style="background: rgba(255,255,255,0.05); font-weight: 600; color: var(--secondary);">
+          <input type="text" id="selectedPlan" value="100 Followers (FREE) - ₹0" readonly style="color: var(--secondary); font-weight: 600;">
         </div>
 
-        <!-- Custom Input if custom is chosen -->
+        <!-- Custom Input (Only shown if custom plan picked in modal) -->
         <div class="input-group" id="customGroup" style="display: none;">
-          <label><i class="fa-solid fa-arrow-up-1-9"></i> Custom Followers Quantity</label>
+          <label><i class="fa-solid fa-arrow-up-1-9"></i> Custom Followers Amount</label>
           <input type="number" id="customCount" placeholder="e.g. 15000">
         </div>
 
-        <!-- Username Field -->
+        <!-- Username Input -->
         <div class="input-group">
           <label><i class="fa-solid fa-user"></i> Social Media Username / Handle</label>
           <input type="text" id="username" placeholder="@yourusername" required>
@@ -381,42 +410,131 @@
 
         <!-- Submit Button -->
         <button type="submit" id="submitBtn" class="btn-submit">
-          <i class="fa-brands fa-discord"></i> Submit Request
+          <i class="fa-solid fa-rocket"></i> Claim Followers Now
         </button>
-        
-        <p id="statusMsg" class="status-msg"></p>
+
+        <!-- Engaging Confirmation Status -->
+        <div id="statusMsg" class="status-msg"></div>
       </form>
     </div>
 
   </div>
 
+  <!-- OTHER PLANS POPUP MODAL -->
+  <div class="modal-overlay" id="plansModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <h3 style="text-align: center; font-size: 1.8rem;"><i class="fa-solid fa-crown" style="color: var(--secondary);"></i> Select Premium Package</h3>
+      <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">Choose a plan to instantly supercharge your growth!</p>
+
+      <div class="modal-grid">
+        <div class="plan-card" onclick="selectPaidPlan('1,000 Followers', '₹50')">
+          <h4>1,000</h4>
+          <p>Followers</p>
+          <div class="price">₹50</div>
+        </div>
+
+        <div class="plan-card" onclick="selectPaidPlan('2,000 Followers', '₹100')">
+          <h4>2,000</h4>
+          <p>Followers</p>
+          <div class="price">₹100</div>
+        </div>
+
+        <div class="plan-card" onclick="selectPaidPlan('5,000 Followers', '₹250')">
+          <h4>5,000</h4>
+          <p>Followers</p>
+          <div class="price">₹250</div>
+        </div>
+
+        <div class="plan-card" onclick="selectPaidPlan('10,000 Followers', '₹500')">
+          <h4>10,000</h4>
+          <p>Followers</p>
+          <div class="price">₹500</div>
+        </div>
+
+        <div class="plan-card" onclick="selectPaidPlan('Custom Amount', 'Custom Price')">
+          <h4 style="color: var(--secondary);">Custom</h4>
+          <p>Followers</p>
+          <div class="price" style="color: var(--secondary);">Flexible</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // Configured with your Discord Webhook URL:
     const DISCORD_WEBHOOK_URL = "https://canary.discord.com/api/webhooks/1530479431347339415/9kdSYUvN-xavZMPB3p0a0wftd0AhWB-GX5d5iSNsV5fn_rGfGd100QlZbAGXJ5SHuTrl";
 
-    let selectedPackageName = "100 Followers (FREE)";
-    let selectedPackagePrice = "₹0";
+    let currentPlanName = "100 Followers (FREE)";
+    let currentPlanPrice = "₹0";
+    let timerInterval = null;
 
-    function selectPackage(planName, price, cardElement) {
-      document.querySelectorAll('.card').forEach(card => card.classList.remove('selected'));
-      cardElement.classList.add('selected');
+    // Modal Handlers
+    function openModal() { document.getElementById('plansModal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('plansModal').style.display = 'none'; }
 
-      selectedPackageName = planName;
-      selectedPackagePrice = price;
+    function selectPaidPlan(name, price) {
+      currentPlanName = name;
+      currentPlanPrice = price;
 
-      const planInput = document.getElementById('selectedPlan');
+      document.getElementById('selectedPlan').value = `${name} - ${price}`;
+      
       const customGroup = document.getElementById('customGroup');
-
-      planInput.value = `${planName} - ${price}`;
-
-      if (planName === 'Custom Amount') {
+      if (name === 'Custom Amount') {
         customGroup.style.display = 'block';
       } else {
         customGroup.style.display = 'none';
       }
+
+      closeModal();
+      document.getElementById('statusMsg').style.display = 'none';
     }
 
-    async function handleDiscordOrderSubmit(e) {
+    // 24-Hour Timer System
+    function updateTimerDisplay() {
+      const lastClaim = localStorage.getItem('ms_followers_free_claim');
+      const timerBox = document.getElementById('timerBox');
+      const timerDisplay = document.getElementById('timerDisplay');
+      
+      if (!lastClaim) {
+        timerBox.style.display = 'none';
+        return false;
+      }
+
+      const now = Date.now();
+      const cooldownMs = 24 * 60 * 60 * 1000; // 24 Hours
+      const timeRemaining = (parseInt(lastClaim, 10) + cooldownMs) - now;
+
+      if (timeRemaining <= 0) {
+        // Cooldown finished
+        localStorage.removeItem('ms_followers_free_claim');
+        timerBox.style.display = 'none';
+        clearInterval(timerInterval);
+        return false;
+      }
+
+      // Format H:M:S
+      const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+      const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+      timerDisplay.innerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      timerBox.style.display = 'block';
+      return true;
+    }
+
+    function startLiveTimer() {
+      if (updateTimerDisplay()) {
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(updateTimerDisplay, 1000);
+      }
+    }
+
+    // On Page Load: Start Timer if active
+    window.onload = function() {
+      startLiveTimer();
+    };
+
+    async function handleOrderSubmit(e) {
       e.preventDefault();
 
       const username = document.getElementById('username').value.trim();
@@ -424,28 +542,37 @@
       const submitBtn = document.getElementById('submitBtn');
       const statusMsg = document.getElementById('statusMsg');
 
-      if (!username) {
-        alert("Please enter a valid username!");
-        return;
+      if (!username) return;
+
+      // Check if trying to claim free plan during active cooldown
+      if (currentPlanName === '100 Followers (FREE)') {
+        const lastClaim = localStorage.getItem('ms_followers_free_claim');
+        if (lastClaim && (Date.now() - parseInt(lastClaim, 10) < 24 * 60 * 60 * 1000)) {
+          statusMsg.style.background = "rgba(255, 65, 108, 0.15)";
+          statusMsg.style.border = "1px solid #ff416c";
+          statusMsg.style.color = "#ff416c";
+          statusMsg.innerHTML = "⏳ <strong>Free Trial Cooling Down!</strong><br>You have already claimed free followers today. Please wait for the timer or pick a paid plan above!";
+          statusMsg.style.display = "block";
+          return;
+        }
       }
 
       submitBtn.disabled = true;
-      submitBtn.innerText = "Sending Order...";
+      submitBtn.innerText = "Processing...";
 
-      // Build rich Discord Embed object
       const embedPayload = {
-        username: "Follower Bot",
+        username: "MS Followers Bot",
         avatar_url: "https://i.imgur.com/4M34hi2.png",
         embeds: [
           {
-            title: "🚀 New Follower Request Received!",
-            color: 0x8a2be2, // Purple accent
+            title: "🚀 New Follower Order!",
+            color: 0x00f2fe,
             fields: [
-              { name: "👤 Target Username", value: `\`${username}\``, inline: true },
-              { name: "📦 Selected Plan", value: selectedPackageName === 'Custom Amount' ? `Custom (${customCount || 'Unspecified'})` : selectedPackageName, inline: true },
-              { name: "💰 Price", value: selectedPackagePrice, inline: true }
+              { name: "👤 Username", value: `\`${username}\``, inline: true },
+              { name: "📦 Plan", value: currentPlanName === 'Custom Amount' ? `Custom (${customCount || 'Unspecified'})` : currentPlanName, inline: true },
+              { name: "💰 Price", value: currentPlanPrice, inline: true }
             ],
-            footer: { text: "MS Followers System" },
+            footer: { text: "MS Followers Notification System" },
             timestamp: new Date().toISOString()
           }
         ]
@@ -459,22 +586,35 @@
         });
 
         if (response.ok) {
+          // If free plan was claimed, save timestamp & trigger timer
+          if (currentPlanName === '100 Followers (FREE)') {
+            localStorage.setItem('ms_followers_free_claim', Date.now().toString());
+            startLiveTimer();
+          }
+
+          // Engaging user-friendly confirmation message
+          statusMsg.style.background = "rgba(56, 239, 125, 0.15)";
+          statusMsg.style.border = "1px solid #38ef7d";
           statusMsg.style.color = "#38ef7d";
-          statusMsg.innerText = "✅ Request submitted! Check your Discord.";
+          statusMsg.innerHTML = "🎉 <strong>Order Confirmed!</strong><br>Your followers are being queued and will reach your account within <strong>1 hour</strong>!";
           statusMsg.style.display = "block";
+
           document.getElementById('username').value = "";
         } else {
-          throw new Error("Failed to send");
+          throw new Error("API Error");
         }
       } catch (err) {
+        statusMsg.style.background = "rgba(255, 65, 108, 0.15)";
+        statusMsg.style.border = "1px solid #ff416c";
         statusMsg.style.color = "#ff416c";
-        statusMsg.innerText = "❌ Error submitting request. Please try again.";
+        statusMsg.innerText = "❌ Something went wrong while submitting. Please try again.";
         statusMsg.style.display = "block";
       } finally {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fa-brands fa-discord"></i> Submit Request';
+        submitBtn.innerHTML = '<i class="fa-solid fa-rocket"></i> Claim Followers Now';
       }
     }
   </script>
 </body>
-  </html>
+</html>
+
