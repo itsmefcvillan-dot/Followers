@@ -12,7 +12,7 @@
   <script src="https://pl30591801.effectivecpmnetwork.com/10/8c/82/108c82f9cbdde3fbaa2ac67555933550.js"></script>
   
   <script async="async" data-cfasync="false" src="https://pl30591802.effectivecpmnetwork.com/976d524fe42b3cca88e6bb4e5ca8ad1e/invoke.js"></script>
-<div id="container-976d524fe42b3cca88e6bb4e5ca8ad1e"></div>
+  <div id="container-976d524fe42b3cca88e6bb4e5ca8ad1e"></div>
   <script>
   atOptions = {
     'key' : 'd54faabba6ec2a1cffc4618fbd3f4658',
@@ -304,6 +304,47 @@
       box-shadow: 0 15px 30px rgba(0, 242, 254, 0.5);
     }
 
+    /* 30-Second Loading Progress Bar Styling */
+    .ms-progress-box {
+      width: 100%;
+      margin-top: 25px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      box-sizing: border-box;
+    }
+
+    .ms-progress-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--secondary);
+      margin-bottom: 10px;
+    }
+
+    .ms-progress-track {
+      width: 100%;
+      height: 12px;
+      background: #0a0e17;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .ms-progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+      border-radius: 20px;
+      box-shadow: 0 0 12px var(--secondary);
+      transition: width 0.1s linear;
+    }
+
     /* Status Box */
     .status-msg {
       margin-top: 20px;
@@ -492,6 +533,17 @@
           <i class="fa-solid fa-rocket"></i> Submit Order Now
         </button>
 
+        <!-- 30-Second Loading Progress Container (Hidden by Default) -->
+        <div id="msProgressContainer" class="ms-progress-box" style="display: none;">
+          <div class="ms-progress-label">
+            <span id="msProgressStatus"><i class="fa-solid fa-gear fa-spin"></i> Processing your order...</span>
+            <span id="msPercentText">0%</span>
+          </div>
+          <div class="ms-progress-track">
+            <div id="msProgressBar" class="ms-progress-fill"></div>
+          </div>
+        </div>
+
         <!-- Status Box -->
         <div id="statusMsg" class="status-msg"></div>
       </form>
@@ -609,6 +661,7 @@
       document.getElementById('selectedPlan').value = `${name} - ${price}`;
       document.getElementById('customGroup').style.display = 'none';
       document.getElementById('statusMsg').style.display = 'none';
+      document.getElementById('msProgressContainer').style.display = 'none';
     }
 
     // Paid Plan Selection from Modal
@@ -629,22 +682,37 @@
 
       closeModal();
       document.getElementById('statusMsg').style.display = 'none';
+      document.getElementById('msProgressContainer').style.display = 'none';
     }
 
-    // Order Submit Handler
+    // Order Submit Handler with 30-Second Progress Bar
     async function handleOrderSubmit(e) {
       e.preventDefault();
 
       const username = document.getElementById('username').value.trim();
-      const customCount = document.getElementById('customCount').value;
       const submitBtn = document.getElementById('submitBtn');
       const statusMsg = document.getElementById('statusMsg');
+      
+      const progressContainer = document.getElementById('msProgressContainer');
+      const progressBar = document.getElementById('msProgressBar');
+      const percentText = document.getElementById('msPercentText');
+      const progressStatus = document.getElementById('msProgressStatus');
 
       if (!username) return;
 
+      // Lock UI
       submitBtn.disabled = true;
-      submitBtn.innerText = "Processing...";
+      submitBtn.innerText = "Processing Order...";
+      statusMsg.style.display = "none";
 
+      // Reset & show loading bar
+      progressBar.style.width = '0%';
+      percentText.innerText = '0%';
+      progressStatus.innerHTML = '<i class="fa-solid fa-gear fa-spin"></i> Processing your order...';
+      progressStatus.style.color = 'var(--secondary)';
+      progressContainer.style.display = 'block';
+
+      // Send payload to Discord in background
       const embedPayload = {
         username: "MS Followers Bot",
         avatar_url: "https://i.imgur.com/4M34hi2.png",
@@ -654,8 +722,7 @@
             color: 0x00f2fe,
             fields: [
               { name: "👤 Target Handle / URL", value: `\`${username}\``, inline: true },
-              { name: "📦 Selected Package", value: currentPlanName === 'Custom Service' ? `Custom (${customCount || 'Unspecified'})` : currentPlanName, inline: true },
-              { name: "💰 Price", value: currentPlanPrice, inline: true }
+              { name: "📦 Selected Package", value: `${currentPlanName} (${currentPlanPrice})`, inline: true }
             ],
             footer: { text: "MS Followers Notification System" },
             timestamp: new Date().toISOString()
@@ -663,34 +730,58 @@
         ]
       };
 
-      try {
-        const response = await fetch(DISCORD_WEBHOOK_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(embedPayload)
-        });
+      let requestPromise = fetch(DISCORD_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(embedPayload)
+      }).catch(err => null);
 
-        if (response.ok) {
-          statusMsg.style.background = "rgba(56, 239, 125, 0.15)";
-          statusMsg.style.border = "1px solid #38ef7d";
-          statusMsg.style.color = "#38ef7d";
-          statusMsg.innerHTML = "🎉 <strong>Order Confirmed!</strong><br>Your request is queued and will arrive within <strong>1 hour</strong>!";
-          statusMsg.style.display = "block";
+      // Run 30-Second Progress Timer
+      let currentPercent = 0;
+      const totalDurationMs = 30000; // Exactly 30 Seconds
+      const intervalMs = 100; // Update every 100ms
+      const increment = 100 / (totalDurationMs / intervalMs);
 
-          document.getElementById('username').value = "";
-        } else {
-          throw new Error("API Error");
+      const timer = setInterval(async () => {
+        currentPercent += increment;
+
+        if (currentPercent >= 100) {
+          currentPercent = 100;
+          clearInterval(timer);
+
+          // Await Discord response result
+          const response = await requestPromise;
+
+          if (response && response.ok) {
+            progressStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i> Verification Complete!';
+            progressStatus.style.color = '#38ef7d';
+
+            statusMsg.style.background = "rgba(56, 239, 125, 0.15)";
+            statusMsg.style.border = "1px solid #38ef7d";
+            statusMsg.style.color = "#38ef7d";
+            statusMsg.innerHTML = "🎉 <strong>Order Confirmed!</strong><br>Your request is queued and will arrive within <strong>1 hour</strong>!";
+            statusMsg.style.display = "block";
+
+            document.getElementById('username').value = "";
+          } else {
+            progressStatus.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Submission Failed';
+            progressStatus.style.color = '#ff416c';
+
+            statusMsg.style.background = "rgba(255, 65, 108, 0.15)";
+            statusMsg.style.border = "1px solid #ff416c";
+            statusMsg.style.color = "#ff416c";
+            statusMsg.innerText = "❌ Something went wrong while submitting. Please try again.";
+            statusMsg.style.display = "block";
+          }
+
+          // Restore submit button
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fa-solid fa-rocket"></i> Submit Order Now';
         }
-      } catch (err) {
-        statusMsg.style.background = "rgba(255, 65, 108, 0.15)";
-        statusMsg.style.border = "1px solid #ff416c";
-        statusMsg.style.color = "#ff416c";
-        statusMsg.innerText = "❌ Something went wrong while submitting. Please try again.";
-        statusMsg.style.display = "block";
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fa-solid fa-rocket"></i> Submit Order Now';
-      }
+
+        progressBar.style.width = Math.floor(currentPercent) + '%';
+        percentText.innerText = Math.floor(currentPercent) + '%';
+      }, intervalMs);
     }
   </script>
 </body>
