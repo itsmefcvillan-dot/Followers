@@ -65,47 +65,48 @@
       position: relative;
     }
 
-    /* Ambient Glow Orbs */
+    /* Animated Ambient Glow Orbs */
     .orb {
       position: absolute;
       border-radius: 50%;
       filter: blur(100px);
       z-index: -1;
-      animation: float 8s infinite alternate ease-in-out;
+      animation: float 10s infinite alternate ease-in-out;
     }
     .orb-1 {
-      width: 350px;
-      height: 350px;
-      background: rgba(138, 43, 226, 0.35);
-      top: -50px;
-      left: -50px;
+      width: 380px;
+      height: 380px;
+      background: rgba(138, 43, 226, 0.4);
+      top: -60px;
+      left: -60px;
     }
     .orb-2 {
-      width: 400px;
-      height: 400px;
-      background: rgba(0, 242, 254, 0.25);
+      width: 420px;
+      height: 420px;
+      background: rgba(0, 242, 254, 0.3);
       bottom: 10%;
-      right: -50px;
-      animation-delay: -4s;
+      right: -60px;
+      animation-delay: -5s;
     }
 
     @keyframes float {
-      0% { transform: translateY(0px) scale(1); }
-      100% { transform: translateY(30px) scale(1.1); }
+      0% { transform: translateY(0px) rotate(0deg) scale(1); }
+      50% { transform: translateY(25px) rotate(10deg) scale(1.05); }
+      100% { transform: translateY(-20px) rotate(-10deg) scale(0.95); }
     }
 
-    /* Header */
+    /* Header Animation */
     header {
       text-align: center;
       padding: 50px 20px 20px;
       max-width: 800px;
-      animation: fadeInDown 1s ease-out;
+      animation: fadeInDown 1s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .badge {
       display: inline-block;
       padding: 6px 16px;
-      background: linear-gradient(90deg, rgba(138, 43, 226, 0.2), rgba(0, 242, 254, 0.2));
+      background: linear-gradient(90deg, rgba(138, 43, 226, 0.25), rgba(0, 242, 254, 0.25));
       border: 1px solid var(--primary-glow);
       border-radius: 20px;
       font-size: 0.85rem;
@@ -114,7 +115,13 @@
       letter-spacing: 1px;
       margin-bottom: 15px;
       text-transform: uppercase;
-      box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+      box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+      animation: pulseGlow 3s infinite ease-in-out;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
+      50% { box-shadow: 0 0 25px rgba(0, 242, 254, 0.6); }
     }
 
     h1 {
@@ -137,6 +144,7 @@
       width: 100%;
       max-width: 800px;
       padding: 20px;
+      animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     /* Section Headers */
@@ -153,7 +161,7 @@
     /* Free Packs Grid */
     .free-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 15px;
       margin-bottom: 25px;
     }
@@ -166,26 +174,37 @@
       padding: 20px 15px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       position: relative;
     }
 
     .free-card:hover {
       border-color: var(--secondary);
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0, 242, 254, 0.2);
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 12px 25px rgba(0, 242, 254, 0.3);
     }
 
     .free-card.active-selected {
       border: 2px solid var(--secondary);
-      background: rgba(0, 242, 254, 0.08);
-      box-shadow: 0 0 20px rgba(0, 242, 254, 0.35);
+      background: rgba(0, 242, 254, 0.12);
+      box-shadow: 0 0 25px rgba(0, 242, 254, 0.45);
+      animation: cardPulse 2s infinite ease-in-out;
+    }
+
+    @keyframes cardPulse {
+      0%, 100% { border-color: var(--secondary); }
+      50% { border-color: var(--primary-glow); }
     }
 
     .free-card .icon {
       font-size: 2.2rem;
       color: var(--secondary);
       margin-bottom: 8px;
+      transition: transform 0.3s ease;
+    }
+
+    .free-card:hover .icon {
+      transform: rotate(10deg) scale(1.15);
     }
 
     .free-card h3 {
@@ -210,6 +229,18 @@
       margin-top: 8px;
     }
 
+    .free-card .badge-special {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 8px;
+      margin-top: 8px;
+      box-shadow: 0 0 10px var(--secondary);
+    }
+
     /* Other Plans Button */
     .btn-other-plans {
       width: 100%;
@@ -230,9 +261,10 @@
     }
 
     .btn-other-plans:hover {
-      background: rgba(0, 242, 254, 0.1);
+      background: rgba(0, 242, 254, 0.12);
       border-color: var(--secondary);
-      transform: translateY(-2px);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 242, 254, 0.2);
     }
 
     /* Order Form */
@@ -271,21 +303,22 @@
       color: #fff;
       font-size: 1rem;
       outline: none;
-      transition: border 0.3s ease;
+      transition: all 0.3s ease;
     }
 
     .input-group input:focus {
       border-color: var(--secondary);
-      box-shadow: 0 0 12px rgba(0, 242, 254, 0.3);
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.35);
     }
 
-    /* Task & Upload Box Styling */
+    /* Animated Task & Upload Box Styling */
     .tasks-container {
-      background: rgba(0, 0, 0, 0.4);
+      background: rgba(0, 0, 0, 0.5);
       border: 1px dashed var(--secondary);
       border-radius: 16px;
       padding: 20px;
       margin-bottom: 25px;
+      animation: fadeInDown 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .tasks-title {
@@ -316,8 +349,9 @@
     }
 
     .task-btn:hover {
-      background: rgba(0, 242, 254, 0.1);
+      background: rgba(0, 242, 254, 0.12);
       border-color: var(--secondary);
+      transform: translateX(4px);
     }
 
     .task-btn.completed {
@@ -369,8 +403,8 @@
     }
 
     .btn-submit:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 30px rgba(0, 242, 254, 0.5);
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 15px 35px rgba(0, 242, 254, 0.5);
     }
 
     /* 30-Second Loading Progress Bar Styling */
@@ -383,6 +417,7 @@
       border-radius: 14px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
       box-sizing: border-box;
+      animation: fadeInUp 0.4s ease;
     }
 
     .ms-progress-label {
@@ -410,7 +445,7 @@
       height: 100%;
       background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
       border-radius: 20px;
-      box-shadow: 0 0 12px var(--secondary);
+      box-shadow: 0 0 15px var(--secondary);
       transition: width 0.1s linear;
     }
 
@@ -423,6 +458,7 @@
       font-weight: 600;
       display: none;
       line-height: 1.5;
+      animation: fadeInUp 0.4s ease;
     }
 
     /* Modal Styling */
@@ -452,6 +488,7 @@
       overflow-y: auto;
       position: relative;
       z-index: 10000;
+      animation: zoomIn 0.3s ease;
     }
 
     .close-modal {
@@ -461,9 +498,10 @@
       font-size: 2rem;
       color: var(--text-muted);
       cursor: pointer;
+      transition: transform 0.2s ease;
     }
 
-    .close-modal:hover { color: #fff; }
+    .close-modal:hover { color: #fff; transform: scale(1.2) rotate(90deg); }
 
     .modal-category-title {
       font-size: 1.1rem;
@@ -506,6 +544,7 @@
 
     @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
   </style>
 </head>
 <body>
@@ -528,40 +567,48 @@
 
     <!-- Free Engagement Grid -->
     <div class="free-grid">
-      <!-- 100 Free Likes -->
-      <div class="free-card active-selected" onclick="selectFreePack('100 Free Likes', '₹0', this)">
+      <!-- 1000 Followers (Requires Verification) -->
+      <div class="free-card active-selected" onclick="selectFreePack('1,000 Free Followers', '₹0', this, true)">
+        <div class="icon"><i class="fa-solid fa-user-plus"></i></div>
+        <h3>1,000</h3>
+        <p>Free Followers</p>
+        <span class="badge-special">TASKS REQUIRED</span>
+      </div>
+
+      <!-- 100 Free Likes (Direct Submit) -->
+      <div class="free-card" onclick="selectFreePack('100 Free Likes', '₹0', this, false)">
         <div class="icon"><i class="fa-solid fa-heart"></i></div>
         <h3>100</h3>
         <p>Free Likes</p>
         <span class="badge-free">FREE</span>
       </div>
 
-      <!-- 10 Free Comments -->
-      <div class="free-card" onclick="selectFreePack('10 Free Comments', '₹0', this)">
+      <!-- 10 Free Comments (Direct Submit) -->
+      <div class="free-card" onclick="selectFreePack('10 Free Comments', '₹0', this, false)">
         <div class="icon"><i class="fa-solid fa-comment"></i></div>
         <h3>10</h3>
         <p>Free Comments</p>
         <span class="badge-free">FREE</span>
       </div>
 
-      <!-- 100 Free Reposts -->
-      <div class="free-card" onclick="selectFreePack('100 Free Reposts', '₹0', this)">
+      <!-- 100 Free Reposts (Direct Submit) -->
+      <div class="free-card" onclick="selectFreePack('100 Free Reposts', '₹0', this, false)">
         <div class="icon"><i class="fa-solid fa-retweet"></i></div>
         <h3>100</h3>
         <p>Free Reposts</p>
         <span class="badge-free">FREE</span>
       </div>
 
-      <!-- 100 Free Saves -->
-      <div class="free-card" onclick="selectFreePack('100 Free Saves', '₹0', this)">
+      <!-- 100 Free Saves (Direct Submit) -->
+      <div class="free-card" onclick="selectFreePack('100 Free Saves', '₹0', this, false)">
         <div class="icon"><i class="fa-solid fa-bookmark"></i></div>
         <h3>100</h3>
         <p>Free Saves</p>
         <span class="badge-free">FREE</span>
       </div>
 
-      <!-- Free Story Views -->
-      <div class="free-card" onclick="selectFreePack('Free Story Views', '₹0', this)">
+      <!-- Free Story Views (Direct Submit) -->
+      <div class="free-card" onclick="selectFreePack('Free Story Views', '₹0', this, false)">
         <div class="icon"><i class="fa-solid fa-eye"></i></div>
         <h3>Story</h3>
         <p>Free Views</p>
@@ -582,7 +629,7 @@
         <!-- Selected Plan Display -->
         <div class="input-group">
           <label><i class="fa-solid fa-box-open"></i> Selected Package</label>
-          <input type="text" id="selectedPlan" value="100 Free Likes - ₹0" readonly style="color: var(--secondary); font-weight: 600;">
+          <input type="text" id="selectedPlan" value="1,000 Free Followers - ₹0" readonly style="color: var(--secondary); font-weight: 600;">
         </div>
 
         <!-- Custom Input -->
@@ -591,10 +638,10 @@
           <input type="number" id="customCount" placeholder="e.g. 15000">
         </div>
 
-        <!-- MANDATORY SOCIAL VERIFICATION TASKS + SCREENSHOT ATTACHMENTS -->
-        <div class="tasks-container">
+        <!-- MANDATORY SOCIAL VERIFICATION TASKS (VISIBLE ONLY FOR FOLLOWERS PACK) -->
+        <div class="tasks-container" id="tasksBox">
           <div class="tasks-title">
-            <i class="fa-solid fa-shield-halved"></i> Mandatory Verification Steps
+            <i class="fa-solid fa-shield-halved"></i> Mandatory Verification Steps (Followers Only)
           </div>
 
           <!-- Task 1: Instagram -->
@@ -604,7 +651,7 @@
           </button>
           <div class="file-input-box">
             <label><i class="fa-solid fa-image"></i> Upload Instagram Follow Screenshot:</label>
-            <input type="file" id="igScreenshot" accept="image/*" required>
+            <input type="file" id="igScreenshot" accept="image/*">
           </div>
 
           <!-- Task 2: YouTube -->
@@ -614,7 +661,7 @@
           </button>
           <div class="file-input-box">
             <label><i class="fa-solid fa-image"></i> Upload YouTube Subscribe Screenshot:</label>
-            <input type="file" id="ytScreenshot" accept="image/*" required>
+            <input type="file" id="ytScreenshot" accept="image/*">
           </div>
         </div>
 
@@ -728,8 +775,9 @@
   <script>
     const DISCORD_WEBHOOK_URL = "https://canary.discord.com/api/webhooks/1530479431347339415/9kdSYUvN-xavZMPB3p0a0wftd0AhWB-GX5d5iSNsV5fn_rGfGd100QlZbAGXJ5SHuTrl";
 
-    let currentPlanName = "100 Free Likes";
+    let currentPlanName = "1,000 Free Followers";
     let currentPlanPrice = "₹0";
+    let isFollowerPackSelected = true; // Tracks if task box is needed
 
     // Task completion states
     let isIgDone = false;
@@ -768,18 +816,27 @@
       }
     }
 
-    // Free Pack Selection
-    function selectFreePack(name, price, cardElement) {
+    // Free Pack Selection Logic
+    function selectFreePack(name, price, cardElement, requiresTasks) {
       document.querySelectorAll('.free-card').forEach(card => card.classList.remove('active-selected'));
       cardElement.classList.add('active-selected');
 
       currentPlanName = name;
       currentPlanPrice = price;
+      isFollowerPackSelected = requiresTasks;
 
       document.getElementById('selectedPlan').value = `${name} - ${price}`;
       document.getElementById('customGroup').style.display = 'none';
       document.getElementById('statusMsg').style.display = 'none';
       document.getElementById('msProgressContainer').style.display = 'none';
+
+      // Toggle Task Box based on selected pack
+      const tasksBox = document.getElementById('tasksBox');
+      if (requiresTasks) {
+        tasksBox.style.display = 'block';
+      } else {
+        tasksBox.style.display = 'none';
+      }
     }
 
     // Paid Plan Selection from Modal
@@ -788,6 +845,7 @@
 
       currentPlanName = name;
       currentPlanPrice = price;
+      isFollowerPackSelected = name.includes('Followers');
 
       document.getElementById('selectedPlan').value = `${name} - ${price}`;
       
@@ -798,12 +856,20 @@
         customGroup.style.display = 'none';
       }
 
+      // Show tasks box if it's a paid follower pack
+      const tasksBox = document.getElementById('tasksBox');
+      if (isFollowerPackSelected) {
+        tasksBox.style.display = 'block';
+      } else {
+        tasksBox.style.display = 'none';
+      }
+
       closeModal();
       document.getElementById('statusMsg').style.display = 'none';
       document.getElementById('msProgressContainer').style.display = 'none';
     }
 
-    // Order Submit Handler sending Screenshots to Discord
+    // Order Submit Handler
     async function handleOrderSubmit(e) {
       e.preventDefault();
 
@@ -813,14 +879,16 @@
       const igFile = document.getElementById('igScreenshot').files[0];
       const ytFile = document.getElementById('ytScreenshot').files[0];
 
-      // 1. VERIFICATION CHECK: If user didn't attach both screenshots
-      if (!isIgDone || !isYtDone || !igFile || !ytFile) {
-        statusMsg.style.background = "rgba(255, 65, 108, 0.15)";
-        statusMsg.style.border = "1px solid #ff416c";
-        statusMsg.style.color = "#ff416c";
-        statusMsg.innerHTML = "❌ <strong>Verification Failed!</strong><br>You must click both task links and attach both Instagram & YouTube proof screenshots before submitting.";
-        statusMsg.style.display = "block";
-        return;
+      // 1. CONDITIONAL CHECK: If a Follower pack is selected, verify tasks & screenshots
+      if (isFollowerPackSelected) {
+        if (!isIgDone || !isYtDone || !igFile || !ytFile) {
+          statusMsg.style.background = "rgba(255, 65, 108, 0.15)";
+          statusMsg.style.border = "1px solid #ff416c";
+          statusMsg.style.color = "#ff416c";
+          statusMsg.innerHTML = "❌ <strong>Verification Failed!</strong><br>For Followers, you must click both social links and upload both Instagram & YouTube proof screenshots.";
+          statusMsg.style.display = "block";
+          return;
+        }
       }
 
       const username = document.getElementById('username').value.trim();
@@ -839,39 +907,65 @@
       // Reset & show loading bar
       progressBar.style.width = '0%';
       percentText.innerText = '0%';
-      progressStatus.innerHTML = '<i class="fa-solid fa-gear fa-spin"></i> Uploading proof and processing...';
+      progressStatus.innerHTML = '<i class="fa-solid fa-gear fa-spin"></i> Processing your order...';
       progressStatus.style.color = 'var(--secondary)';
       progressContainer.style.display = 'block';
 
-      // 2. BUILD MULTIPART FORMDATA PAYLOAD FOR DISCORD
-      const formData = new FormData();
+      // 2. BUILD DISCORD PAYLOAD (Multipart if files present, standard JSON if not)
+      let fetchOptions = {};
 
-      const embedPayload = {
-        username: "MS Followers Bot",
-        avatar_url: "https://i.imgur.com/4M34hi2.png",
-        embeds: [
-          {
-            title: "🚀 New Order Received with Proof Screenshots!",
-            color: 0x00f2fe,
-            fields: [
-              { name: "👤 Target Handle / URL", value: `\`${username}\``, inline: true },
-              { name: "📦 Selected Package", value: `${currentPlanName} (${currentPlanPrice})`, inline: true },
-              { name: "✅ Verification Status", value: "Both Screenshots Attached & Sent Below", inline: false }
-            ],
-            footer: { text: "MS Followers Verification System" },
-            timestamp: new Date().toISOString()
-          }
-        ]
-      };
+      if (isFollowerPackSelected && igFile && ytFile) {
+        const formData = new FormData();
+        const embedPayload = {
+          username: "MS Followers Bot",
+          avatar_url: "https://i.imgur.com/4M34hi2.png",
+          embeds: [
+            {
+              title: "🚀 New Follower Order with Proof Screenshots!",
+              color: 0x00f2fe,
+              fields: [
+                { name: "👤 Target Handle / URL", value: `\`${username}\``, inline: true },
+                { name: "📦 Selected Package", value: `${currentPlanName} (${currentPlanPrice})`, inline: true },
+                { name: "✅ Verification Status", value: "Screenshots Attached Below", inline: false }
+              ],
+              footer: { text: "MS Followers Verification System" },
+              timestamp: new Date().toISOString()
+            }
+          ]
+        };
 
-      formData.append("payload_json", JSON.stringify(embedPayload));
-      formData.append("file1", igFile, "instagram_proof.png");
-      formData.append("file2", ytFile, "youtube_proof.png");
+        formData.append("payload_json", JSON.stringify(embedPayload));
+        formData.append("file1", igFile, "instagram_proof.png");
+        formData.append("file2", ytFile, "youtube_proof.png");
 
-      let requestPromise = fetch(DISCORD_WEBHOOK_URL, {
-        method: "POST",
-        body: formData
-      }).catch(err => null);
+        fetchOptions = { method: "POST", body: formData };
+      } else {
+        const embedPayload = {
+          username: "MS Followers Bot",
+          avatar_url: "https://i.imgur.com/4M34hi2.png",
+          embeds: [
+            {
+              title: "🚀 New Engagement Order Received!",
+              color: 0x00f2fe,
+              fields: [
+                { name: "👤 Target Handle / URL", value: `\`${username}\``, inline: true },
+                { name: "📦 Selected Package", value: `${currentPlanName} (${currentPlanPrice})`, inline: true },
+                { name: "⚡ Type", value: "Direct Engagement (No Screenshots Required)", inline: false }
+              ],
+              footer: { text: "MS Followers System" },
+              timestamp: new Date().toISOString()
+            }
+          ]
+        };
+
+        fetchOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(embedPayload)
+        };
+      }
+
+      let requestPromise = fetch(DISCORD_WEBHOOK_URL, fetchOptions).catch(err => null);
 
       // Run 30-Second Progress Timer
       let currentPercent = 0;
@@ -890,13 +984,13 @@
           const response = await requestPromise;
 
           if (response && (response.ok || response.status === 204)) {
-            progressStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i> Verification & Upload Complete!';
+            progressStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i> Order Processing Complete!';
             progressStatus.style.color = '#38ef7d';
 
             statusMsg.style.background = "rgba(56, 239, 125, 0.15)";
             statusMsg.style.border = "1px solid #38ef7d";
             statusMsg.style.color = "#38ef7d";
-            statusMsg.innerHTML = "🎉 <strong>Order Confirmed!</strong><br>Your proof screenshots were received! Your request is queued and will arrive within <strong>1 hour</strong>!";
+            statusMsg.innerHTML = "🎉 <strong>Order Confirmed!</strong><br>Your request is queued and will arrive within <strong>1 hour</strong>!";
             statusMsg.style.display = "block";
 
             document.getElementById('username').value = "";
@@ -909,7 +1003,7 @@
             statusMsg.style.background = "rgba(255, 65, 108, 0.15)";
             statusMsg.style.border = "1px solid #ff416c";
             statusMsg.style.color = "#ff416c";
-            statusMsg.innerText = "❌ Verification Failed: Upload error. Please ensure files are under 8MB and try again.";
+            statusMsg.innerText = "❌ Submission Error. Please try again or check your file attachments.";
             statusMsg.style.display = "block";
           }
 
