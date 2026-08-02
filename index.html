@@ -279,6 +279,75 @@
       box-shadow: 0 0 12px rgba(0, 242, 254, 0.3);
     }
 
+    /* Task & Upload Box Styling */
+    .tasks-container {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px dashed var(--secondary);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 25px;
+    }
+
+    .tasks-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--secondary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .task-btn {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 10px;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.3s ease;
+    }
+
+    .task-btn:hover {
+      background: rgba(0, 242, 254, 0.1);
+      border-color: var(--secondary);
+    }
+
+    .task-btn.completed {
+      border-color: #38ef7d;
+      background: rgba(56, 239, 125, 0.15);
+      color: #38ef7d;
+    }
+
+    .file-input-box {
+      margin-top: 10px;
+      margin-bottom: 15px;
+    }
+
+    .file-input-box label {
+      font-size: 0.85rem;
+      color: var(--secondary);
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .file-input-box input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
     .btn-submit {
       width: 100%;
       padding: 18px;
@@ -522,6 +591,33 @@
           <input type="number" id="customCount" placeholder="e.g. 15000">
         </div>
 
+        <!-- MANDATORY SOCIAL VERIFICATION TASKS + SCREENSHOT ATTACHMENTS -->
+        <div class="tasks-container">
+          <div class="tasks-title">
+            <i class="fa-solid fa-shield-halved"></i> Mandatory Verification Steps
+          </div>
+
+          <!-- Task 1: Instagram -->
+          <button type="button" id="taskIg" class="task-btn" onclick="completeTask('ig', 'https://www.instagram.com/zyro.edxts?igsh=MWQ1eTZxbDNlNWM0eQ==')">
+            <span><i class="fa-brands fa-instagram brand-icon" style="color: #e1306c;"></i> Follow @zyro.edxts on Instagram</span>
+            <span id="igStatus"><i class="fa-solid fa-arrow-right"></i></span>
+          </button>
+          <div class="file-input-box">
+            <label><i class="fa-solid fa-image"></i> Upload Instagram Follow Screenshot:</label>
+            <input type="file" id="igScreenshot" accept="image/*" required>
+          </div>
+
+          <!-- Task 2: YouTube -->
+          <button type="button" id="taskYt" class="task-btn" onclick="completeTask('yt', 'https://youtube.com/@vayadanvlogs?si=S8ZpFJEXbjtBiPzO')">
+            <span><i class="fa-brands fa-youtube brand-icon" style="color: #ff0000;"></i> Subscribe to @vayadanvlogs on YouTube</span>
+            <span id="ytStatus"><i class="fa-solid fa-arrow-right"></i></span>
+          </button>
+          <div class="file-input-box">
+            <label><i class="fa-solid fa-image"></i> Upload YouTube Subscribe Screenshot:</label>
+            <input type="file" id="ytScreenshot" accept="image/*" required>
+          </div>
+        </div>
+
         <!-- Username / Post Link Input -->
         <div class="input-group">
           <label><i class="fa-solid fa-user"></i> Social Media Username or Post URL</label>
@@ -635,6 +731,28 @@
     let currentPlanName = "100 Free Likes";
     let currentPlanPrice = "₹0";
 
+    // Task completion states
+    let isIgDone = false;
+    let isYtDone = false;
+
+    function completeTask(type, targetUrl) {
+      window.open(targetUrl, '_blank');
+
+      if (type === 'ig') {
+        isIgDone = true;
+        const taskIg = document.getElementById('taskIg');
+        const igStatus = document.getElementById('igStatus');
+        taskIg.classList.add('completed');
+        igStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i> Clicked';
+      } else if (type === 'yt') {
+        isYtDone = true;
+        const taskYt = document.getElementById('taskYt');
+        const ytStatus = document.getElementById('ytStatus');
+        taskYt.classList.add('completed');
+        ytStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i> Clicked';
+      }
+    }
+
     // Modal Control
     function openModal() {
       document.getElementById('plansModal').style.display = 'flex';
@@ -685,14 +803,27 @@
       document.getElementById('msProgressContainer').style.display = 'none';
     }
 
-    // Order Submit Handler with 30-Second Progress Bar
+    // Order Submit Handler sending Screenshots to Discord
     async function handleOrderSubmit(e) {
       e.preventDefault();
 
-      const username = document.getElementById('username').value.trim();
-      const submitBtn = document.getElementById('submitBtn');
       const statusMsg = document.getElementById('statusMsg');
-      
+      const submitBtn = document.getElementById('submitBtn');
+
+      const igFile = document.getElementById('igScreenshot').files[0];
+      const ytFile = document.getElementById('ytScreenshot').files[0];
+
+      // 1. VERIFICATION CHECK: If user didn't attach both screenshots
+      if (!isIgDone || !isYtDone || !igFile || !ytFile) {
+        statusMsg.style.background = "rgba(255, 65, 108, 0.15)";
+        statusMsg.style.border = "1px solid #ff416c";
+        statusMsg.style.color = "#ff416c";
+        statusMsg.innerHTML = "❌ <strong>Verification Failed!</strong><br>You must click both task links and attach both Instagram & YouTube proof screenshots before submitting.";
+        statusMsg.style.display = "block";
+        return;
+      }
+
+      const username = document.getElementById('username').value.trim();
       const progressContainer = document.getElementById('msProgressContainer');
       const progressBar = document.getElementById('msProgressBar');
       const percentText = document.getElementById('msPercentText');
@@ -708,32 +839,38 @@
       // Reset & show loading bar
       progressBar.style.width = '0%';
       percentText.innerText = '0%';
-      progressStatus.innerHTML = '<i class="fa-solid fa-gear fa-spin"></i> Processing your order...';
+      progressStatus.innerHTML = '<i class="fa-solid fa-gear fa-spin"></i> Uploading proof and processing...';
       progressStatus.style.color = 'var(--secondary)';
       progressContainer.style.display = 'block';
 
-      // Send payload to Discord in background
+      // 2. BUILD MULTIPART FORMDATA PAYLOAD FOR DISCORD
+      const formData = new FormData();
+
       const embedPayload = {
         username: "MS Followers Bot",
         avatar_url: "https://i.imgur.com/4M34hi2.png",
         embeds: [
           {
-            title: "🚀 New Order Received!",
+            title: "🚀 New Order Received with Proof Screenshots!",
             color: 0x00f2fe,
             fields: [
               { name: "👤 Target Handle / URL", value: `\`${username}\``, inline: true },
-              { name: "📦 Selected Package", value: `${currentPlanName} (${currentPlanPrice})`, inline: true }
+              { name: "📦 Selected Package", value: `${currentPlanName} (${currentPlanPrice})`, inline: true },
+              { name: "✅ Verification Status", value: "Both Screenshots Attached & Sent Below", inline: false }
             ],
-            footer: { text: "MS Followers Notification System" },
+            footer: { text: "MS Followers Verification System" },
             timestamp: new Date().toISOString()
           }
         ]
       };
 
+      formData.append("payload_json", JSON.stringify(embedPayload));
+      formData.append("file1", igFile, "instagram_proof.png");
+      formData.append("file2", ytFile, "youtube_proof.png");
+
       let requestPromise = fetch(DISCORD_WEBHOOK_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(embedPayload)
+        body: formData
       }).catch(err => null);
 
       // Run 30-Second Progress Timer
@@ -752,17 +889,19 @@
           // Await Discord response result
           const response = await requestPromise;
 
-          if (response && response.ok) {
-            progressStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i> Verification Complete!';
+          if (response && (response.ok || response.status === 204)) {
+            progressStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i> Verification & Upload Complete!';
             progressStatus.style.color = '#38ef7d';
 
             statusMsg.style.background = "rgba(56, 239, 125, 0.15)";
             statusMsg.style.border = "1px solid #38ef7d";
             statusMsg.style.color = "#38ef7d";
-            statusMsg.innerHTML = "🎉 <strong>Order Confirmed!</strong><br>Your request is queued and will arrive within <strong>1 hour</strong>!";
+            statusMsg.innerHTML = "🎉 <strong>Order Confirmed!</strong><br>Your proof screenshots were received! Your request is queued and will arrive within <strong>1 hour</strong>!";
             statusMsg.style.display = "block";
 
             document.getElementById('username').value = "";
+            document.getElementById('igScreenshot').value = "";
+            document.getElementById('ytScreenshot').value = "";
           } else {
             progressStatus.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Submission Failed';
             progressStatus.style.color = '#ff416c';
@@ -770,7 +909,7 @@
             statusMsg.style.background = "rgba(255, 65, 108, 0.15)";
             statusMsg.style.border = "1px solid #ff416c";
             statusMsg.style.color = "#ff416c";
-            statusMsg.innerText = "❌ Something went wrong while submitting. Please try again.";
+            statusMsg.innerText = "❌ Verification Failed: Upload error. Please ensure files are under 8MB and try again.";
             statusMsg.style.display = "block";
           }
 
