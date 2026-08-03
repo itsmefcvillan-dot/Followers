@@ -34,6 +34,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
+  <!-- EmailJS SDK Integration -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script type="text/javascript">
+     (function(){
+        // YOUR EMAILJS PUBLIC KEY
+        emailjs.init("R8fYcYp4J1yqHd4kW");
+     })();
+  </script>
+
   <style>
     :root {
       --primary: #8a2be2;
@@ -671,6 +680,12 @@
           <input type="text" id="username" placeholder="@yourusername or Post Link" required>
         </div>
 
+        <!-- Email Address Input -->
+        <div class="input-group">
+          <label><i class="fa-solid fa-envelope"></i> Email Address (For Order Confirmation Receipt)</label>
+          <input type="email" id="userEmail" placeholder="yourname@example.com" required>
+        </div>
+
         <!-- Submit Button -->
         <button type="submit" id="submitBtn" class="btn-submit">
           <i class="fa-solid fa-rocket"></i> Submit Order Now
@@ -777,7 +792,7 @@
 
     let currentPlanName = "1,000 Free Followers";
     let currentPlanPrice = "₹0";
-    let isFollowerPackSelected = true; // Tracks if task box is needed
+    let isFollowerPackSelected = true;
 
     // Task completion states
     let isIgDone = false;
@@ -830,7 +845,6 @@
       document.getElementById('statusMsg').style.display = 'none';
       document.getElementById('msProgressContainer').style.display = 'none';
 
-      // Toggle Task Box based on selected pack
       const tasksBox = document.getElementById('tasksBox');
       if (requiresTasks) {
         tasksBox.style.display = 'block';
@@ -856,7 +870,6 @@
         customGroup.style.display = 'none';
       }
 
-      // Show tasks box if it's a paid follower pack
       const tasksBox = document.getElementById('tasksBox');
       if (isFollowerPackSelected) {
         tasksBox.style.display = 'block';
@@ -869,7 +882,7 @@
       document.getElementById('msProgressContainer').style.display = 'none';
     }
 
-    // Order Submit Handler
+    // Order Submit Handler with Confirmation Email & Discord Dispatch
     async function handleOrderSubmit(e) {
       e.preventDefault();
 
@@ -878,6 +891,10 @@
 
       const igFile = document.getElementById('igScreenshot').files[0];
       const ytFile = document.getElementById('ytScreenshot').files[0];
+      const userEmail = document.getElementById('userEmail').value.trim();
+      const username = document.getElementById('username').value.trim();
+
+      if (!username || !userEmail) return;
 
       // 1. CONDITIONAL CHECK: If a Follower pack is selected, verify tasks & screenshots
       if (isFollowerPackSelected) {
@@ -891,13 +908,10 @@
         }
       }
 
-      const username = document.getElementById('username').value.trim();
       const progressContainer = document.getElementById('msProgressContainer');
       const progressBar = document.getElementById('msProgressBar');
       const percentText = document.getElementById('msPercentText');
       const progressStatus = document.getElementById('msProgressStatus');
-
-      if (!username) return;
 
       // Lock UI
       submitBtn.disabled = true;
@@ -907,11 +921,11 @@
       // Reset & show loading bar
       progressBar.style.width = '0%';
       percentText.innerText = '0%';
-      progressStatus.innerHTML = '<i class="fa-solid fa-gear fa-spin"></i> Processing your order...';
+      progressStatus.innerHTML = '<i class="fa-solid fa-gear fa-spin"></i> Processing your order & sending confirmation receipt...';
       progressStatus.style.color = 'var(--secondary)';
       progressContainer.style.display = 'block';
 
-      // 2. BUILD DISCORD PAYLOAD (Multipart if files present, standard JSON if not)
+      // 2. DISCORD PAYLOAD PREPARATION
       let fetchOptions = {};
 
       if (isFollowerPackSelected && igFile && ytFile) {
@@ -921,10 +935,11 @@
           avatar_url: "https://i.imgur.com/4M34hi2.png",
           embeds: [
             {
-              title: "🚀 New Follower Order with Proof Screenshots!",
+              title: "🚀 New Follower Order Received!",
               color: 0x00f2fe,
               fields: [
                 { name: "👤 Target Handle / URL", value: `\`${username}\``, inline: true },
+                { name: "📧 Customer Email", value: `\`${userEmail}\``, inline: true },
                 { name: "📦 Selected Package", value: `${currentPlanName} (${currentPlanPrice})`, inline: true },
                 { name: "✅ Verification Status", value: "Screenshots Attached Below", inline: false }
               ],
@@ -949,6 +964,7 @@
               color: 0x00f2fe,
               fields: [
                 { name: "👤 Target Handle / URL", value: `\`${username}\``, inline: true },
+                { name: "📧 Customer Email", value: `\`${userEmail}\``, inline: true },
                 { name: "📦 Selected Package", value: `${currentPlanName} (${currentPlanPrice})`, inline: true },
                 { name: "⚡ Type", value: "Direct Engagement (No Screenshots Required)", inline: false }
               ],
@@ -965,7 +981,20 @@
         };
       }
 
+      // 3. TRIGGER DISCORD WEBHOOK AND EMAILJS SIMULTANEOUSLY
       let requestPromise = fetch(DISCORD_WEBHOOK_URL, fetchOptions).catch(err => null);
+
+      // Send Email via EmailJS with Template ID: template_ghniyri
+      const emailParams = {
+        to_email: userEmail,
+        username: username,
+        package_name: currentPlanName,
+        price: currentPlanPrice
+      };
+
+      if (window.emailjs) {
+        emailjs.send("service_8o81bfo", "template_ghniyri", emailParams).catch(e => console.log("Email dispatch log:", e));
+      }
 
       // Run 30-Second Progress Timer
       let currentPercent = 0;
@@ -990,10 +1019,11 @@
             statusMsg.style.background = "rgba(56, 239, 125, 0.15)";
             statusMsg.style.border = "1px solid #38ef7d";
             statusMsg.style.color = "#38ef7d";
-            statusMsg.innerHTML = "🎉 <strong>Order Confirmed!</strong><br>Your request is queued and will arrive within <strong>1 hour</strong>!";
+            statusMsg.innerHTML = `🎉 <strong>Order Confirmed!</strong><br>Your request for <strong>${currentPlanName}</strong> is queued! A formal confirmation receipt has been sent to <strong>${userEmail}</strong>.`;
             statusMsg.style.display = "block";
 
             document.getElementById('username').value = "";
+            document.getElementById('userEmail').value = "";
             document.getElementById('igScreenshot').value = "";
             document.getElementById('ytScreenshot').value = "";
           } else {
@@ -1003,7 +1033,7 @@
             statusMsg.style.background = "rgba(255, 65, 108, 0.15)";
             statusMsg.style.border = "1px solid #ff416c";
             statusMsg.style.color = "#ff416c";
-            statusMsg.innerText = "❌ Submission Error. Please try again or check your file attachments.";
+            statusMsg.innerText = "❌ Submission Error. Please check your attachments and try again.";
             statusMsg.style.display = "block";
           }
 
