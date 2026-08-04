@@ -38,7 +38,6 @@
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script type="text/javascript">
      (function(){
-        // YOUR EMAILJS PUBLIC KEY
         emailjs.init("R8fYcYp4J1yqHd4kW");
      })();
   </script>
@@ -74,7 +73,7 @@
       position: relative;
     }
 
-    /* Animated Ambient Glow Orbs */
+    /* Ambient Glow Orbs */
     .orb {
       position: absolute;
       border-radius: 50%;
@@ -320,7 +319,7 @@
       box-shadow: 0 0 15px rgba(0, 242, 254, 0.35);
     }
 
-    /* Animated Task & Upload Box Styling */
+    /* Task Box Styling */
     .tasks-container {
       background: rgba(0, 0, 0, 0.5);
       border: 1px dashed var(--secondary);
@@ -461,12 +460,84 @@
     /* Status Box */
     .status-msg {
       margin-top: 20px;
-      padding: 15px;
-      border-radius: 12px;
+      padding: 18px;
+      border-radius: 14px;
       text-align: center;
       font-weight: 600;
       display: none;
-      line-height: 1.5;
+      line-height: 1.6;
+      animation: fadeInUp 0.4s ease;
+    }
+
+    /* INTERACTIVE PUZZLE CAPTCHA SECTION STYLING */
+    .puzzle-captcha-container {
+      display: none;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--secondary);
+      backdrop-filter: blur(16px);
+      border-radius: 24px;
+      padding: 35px 25px;
+      text-align: center;
+      box-shadow: 0 0 35px rgba(0, 242, 254, 0.35);
+      animation: zoomIn 0.4s ease;
+    }
+
+    .puzzle-target-box {
+      background: rgba(0, 0, 0, 0.6);
+      border: 2px dashed var(--secondary);
+      border-radius: 18px;
+      padding: 20px;
+      margin: 20px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .puzzle-target-icon {
+      font-size: 3.5rem;
+      color: var(--secondary);
+      text-shadow: 0 0 20px var(--secondary);
+      animation: pulseGlow 2s infinite ease-in-out;
+    }
+
+    .puzzle-options-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .puzzle-option-tile {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+      font-size: 2.2rem;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .puzzle-option-tile:hover {
+      border-color: var(--secondary);
+      transform: scale(1.1);
+      background: rgba(0, 242, 254, 0.15);
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+    }
+
+    .verified-success-box {
+      display: none;
+      background: rgba(56, 239, 125, 0.15);
+      border: 1px solid #38ef7d;
+      color: #38ef7d;
+      padding: 25px;
+      border-radius: 18px;
+      text-align: center;
+      margin-top: 20px;
       animation: fadeInUp 0.4s ease;
     }
 
@@ -570,141 +641,154 @@
 
   <div class="container">
     
-    <div class="section-title">
-      <i class="fa-solid fa-gift"></i> Select Free Pack
+    <!-- MAIN FORM WRAPPER (DEFAULT WEBSITE VIEW) -->
+    <div id="mainContentWrapper">
+      <div class="section-title">
+        <i class="fa-solid fa-gift"></i> Select Free Pack
+      </div>
+
+      <!-- Free Engagement Grid -->
+      <div class="free-grid">
+        <div class="free-card active-selected" onclick="selectFreePack('1,000 Free Followers', '₹0', this, true)">
+          <div class="icon"><i class="fa-solid fa-user-plus"></i></div>
+          <h3>1,000</h3>
+          <p>Free Followers</p>
+          <span class="badge-special">TASKS REQUIRED</span>
+        </div>
+
+        <div class="free-card" onclick="selectFreePack('100 Free Likes', '₹0', this, false)">
+          <div class="icon"><i class="fa-solid fa-heart"></i></div>
+          <h3>100</h3>
+          <p>Free Likes</p>
+          <span class="badge-free">FREE</span>
+        </div>
+
+        <div class="free-card" onclick="selectFreePack('10 Free Comments', '₹0', this, false)">
+          <div class="icon"><i class="fa-solid fa-comment"></i></div>
+          <h3>10</h3>
+          <p>Free Comments</p>
+          <span class="badge-free">FREE</span>
+        </div>
+
+        <div class="free-card" onclick="selectFreePack('100 Free Reposts', '₹0', this, false)">
+          <div class="icon"><i class="fa-solid fa-retweet"></i></div>
+          <h3>100</h3>
+          <p>Free Reposts</p>
+          <span class="badge-free">FREE</span>
+        </div>
+
+        <div class="free-card" onclick="selectFreePack('100 Free Saves', '₹0', this, false)">
+          <div class="icon"><i class="fa-solid fa-bookmark"></i></div>
+          <h3>100</h3>
+          <p>Free Saves</p>
+          <span class="badge-free">FREE</span>
+        </div>
+
+        <div class="free-card" onclick="selectFreePack('Free Story Views', '₹0', this, false)">
+          <div class="icon"><i class="fa-solid fa-eye"></i></div>
+          <h3>Story</h3>
+          <p>Free Views</p>
+          <span class="badge-free">FREE</span>
+        </div>
+      </div>
+
+      <button type="button" class="btn-other-plans" onclick="openModal()">
+        <i class="fa-solid fa-layer-group"></i> Explore Premium Paid Plans & Addons
+      </button>
+
+      <!-- Order Submission Form -->
+      <div class="order-section">
+        <h3><i class="fa-solid fa-paper-plane"></i> Submit Your Order</h3>
+        
+        <form id="orderForm" onsubmit="handleOrderSubmit(event)">
+          <div class="input-group">
+            <label><i class="fa-solid fa-box-open"></i> Selected Package</label>
+  <input type="text" id="selectedPlan" value="1,000 Free Followers - ₹0" readonly style="color: var(--secondary); font-weight: 600;">
+          </div>
+
+          <div class="input-group" id="customGroup" style="display: none;">
+            <label><i class="fa-solid fa-arrow-up-1-9"></i> Custom Amount</label>
+            <input type="number" id="customCount" placeholder="e.g. 15000">
+          </div>
+
+          <div class="tasks-container" id="tasksBox">
+            <div class="tasks-title">
+              <i class="fa-solid fa-shield-halved"></i> Mandatory Verification Steps (Followers Only)
+            </div>
+
+            <button type="button" id="taskIg" class="task-btn" onclick="completeTask('ig', 'https://www.instagram.com/zyro.edxts?igsh=MWQ1eTZxbDNlNWM0eQ==')">
+              <span><i class="fa-brands fa-instagram brand-icon" style="color: #e1306c;"></i> Follow @zyro.edxts on Instagram</span>
+              <span id="igStatus"><i class="fa-solid fa-arrow-right"></i></span>
+            </button>
+            <div class="file-input-box">
+              <label><i class="fa-solid fa-image"></i> Upload Instagram Follow Screenshot:</label>
+              <input type="file" id="igScreenshot" accept="image/*">
+            </div>
+
+            <button type="button" id="taskYt" class="task-btn" onclick="completeTask('yt', 'https://youtube.com/@vayadanvlogs?si=S8ZpFJEXbjtBiPzO')">
+              <span><i class="fa-brands fa-youtube brand-icon" style="color: #ff0000;"></i> Subscribe to @vayadanvlogs on YouTube</span>
+              <span id="ytStatus"><i class="fa-solid fa-arrow-right"></i></span>
+            </button>
+            <div class="file-input-box">
+              <label><i class="fa-solid fa-image"></i> Upload YouTube Subscribe Screenshot:</label>
+              <input type="file" id="ytScreenshot" accept="image/*">
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label><i class="fa-solid fa-user"></i> Social Media Username or Post URL</label>
+            <input type="text" id="username" placeholder="@yourusername or Post Link" required>
+          </div>
+
+          <div class="input-group">
+            <label><i class="fa-solid fa-envelope"></i> Email Address (For Order Confirmation Receipt)</label>
+            <input type="email" id="userEmail" placeholder="yourname@example.com" required>
+          </div>
+
+          <button type="submit" id="submitBtn" class="btn-submit">
+            <i class="fa-solid fa-rocket"></i> Submit Order Now
+          </button>
+
+          <div id="msProgressContainer" class="ms-progress-box" style="display: none;">
+            <div class="ms-progress-label">
+              <span id="msProgressStatus"><i class="fa-solid fa-gear fa-spin"></i> Processing your order...</span>
+              <span id="msPercentText">0%</span>
+            </div>
+            <div class="ms-progress-track">
+              <div id="msProgressBar" class="ms-progress-fill"></div>
+            </div>
+          </div>
+
+          <div id="statusMsg" class="status-msg"></div>
+        </form>
+      </div>
     </div>
 
-    <!-- Free Engagement Grid -->
-    <div class="free-grid">
-      <!-- 1000 Followers (Requires Verification) -->
-      <div class="free-card active-selected" onclick="selectFreePack('1,000 Free Followers', '₹0', this, true)">
-        <div class="icon"><i class="fa-solid fa-user-plus"></i></div>
-        <h3>1,000</h3>
-        <p>Free Followers</p>
-        <span class="badge-special">TASKS REQUIRED</span>
+    <!-- DEDICATED VISUAL PUZZLE CAPTCHA PAGE (REDIRECTED FROM EMAIL LINK) -->
+    <div id="puzzleCaptchaSection" class="puzzle-captcha-container">
+      <h2 style="font-size: 2rem; color: var(--secondary); margin-bottom: 8px;">
+        <i class="fa-solid fa-puzzle-piece"></i> Visual Security Captcha
+      </h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Solve the visual matching puzzle to verify your email claim and activate priority queue delivery for <b id="puzzleUserDisplay" style="color: #fff;">User</b>.
+      </p>
+
+      <div class="puzzle-target-box">
+        <p style="font-size: 0.9rem; color: var(--secondary); font-weight: 600;">Tap the matching symbol below:</p>
+        <div id="puzzleTargetIcon" class="puzzle-target-icon"><i class="fa-solid fa-crown"></i></div>
       </div>
 
-      <!-- 100 Free Likes (Direct Submit) -->
-      <div class="free-card" onclick="selectFreePack('100 Free Likes', '₹0', this, false)">
-        <div class="icon"><i class="fa-solid fa-heart"></i></div>
-        <h3>100</h3>
-        <p>Free Likes</p>
-        <span class="badge-free">FREE</span>
+      <div class="puzzle-options-grid" id="puzzleOptionsGrid">
+        <!-- Option tiles rendered dynamically via JS -->
       </div>
 
-      <!-- 10 Free Comments (Direct Submit) -->
-      <div class="free-card" onclick="selectFreePack('10 Free Comments', '₹0', this, false)">
-        <div class="icon"><i class="fa-solid fa-comment"></i></div>
-        <h3>10</h3>
-        <p>Free Comments</p>
-        <span class="badge-free">FREE</span>
+      <div id="puzzleError" style="color: #ff416c; font-weight: 600; margin-top: 15px; display: none;">❌ Incorrect symbol! Try again.</div>
+
+      <div id="verifiedSuccessBox" class="verified-success-box">
+        <i class="fa-solid fa-circle-check" style="font-size: 2.8rem; margin-bottom: 10px;"></i>
+        <h3 style="font-size: 1.6rem; margin-bottom: 5px;">HUMAN CAPTCHA VERIFIED!</h3>
+        <p>Your order request is now <strong>100% Boosted & Priority Queued</strong>!</p>
       </div>
-
-      <!-- 100 Free Reposts (Direct Submit) -->
-      <div class="free-card" onclick="selectFreePack('100 Free Reposts', '₹0', this, false)">
-        <div class="icon"><i class="fa-solid fa-retweet"></i></div>
-        <h3>100</h3>
-        <p>Free Reposts</p>
-        <span class="badge-free">FREE</span>
-      </div>
-
-      <!-- 100 Free Saves (Direct Submit) -->
-      <div class="free-card" onclick="selectFreePack('100 Free Saves', '₹0', this, false)">
-        <div class="icon"><i class="fa-solid fa-bookmark"></i></div>
-        <h3>100</h3>
-        <p>Free Saves</p>
-        <span class="badge-free">FREE</span>
-      </div>
-
-      <!-- Free Story Views (Direct Submit) -->
-      <div class="free-card" onclick="selectFreePack('Free Story Views', '₹0', this, false)">
-        <div class="icon"><i class="fa-solid fa-eye"></i></div>
-        <h3>Story</h3>
-        <p>Free Views</p>
-        <span class="badge-free">FREE</span>
-      </div>
-    </div>
-
-    <!-- Other Plans Trigger Button -->
-    <button type="button" class="btn-other-plans" onclick="openModal()">
-      <i class="fa-solid fa-layer-group"></i> Explore Premium Paid Plans & Addons
-    </button>
-
-    <!-- Order Submission Form -->
-    <div class="order-section">
-      <h3><i class="fa-solid fa-paper-plane"></i> Submit Your Order</h3>
-      
-      <form id="orderForm" onsubmit="handleOrderSubmit(event)">
-        <!-- Selected Plan Display -->
-        <div class="input-group">
-          <label><i class="fa-solid fa-box-open"></i> Selected Package</label>
-          <input type="text" id="selectedPlan" value="1,000 Free Followers - ₹0" readonly style="color: var(--secondary); font-weight: 600;">
-        </div>
-
-        <!-- Custom Input -->
-        <div class="input-group" id="customGroup" style="display: none;">
-          <label><i class="fa-solid fa-arrow-up-1-9"></i> Custom Amount</label>
-          <input type="number" id="customCount" placeholder="e.g. 15000">
-        </div>
-
-        <!-- MANDATORY SOCIAL VERIFICATION TASKS (VISIBLE ONLY FOR FOLLOWERS PACK) -->
-        <div class="tasks-container" id="tasksBox">
-          <div class="tasks-title">
-            <i class="fa-solid fa-shield-halved"></i> Mandatory Verification Steps (Followers Only)
-          </div>
-
-          <!-- Task 1: Instagram -->
-          <button type="button" id="taskIg" class="task-btn" onclick="completeTask('ig', 'https://www.instagram.com/zyro.edxts?igsh=MWQ1eTZxbDNlNWM0eQ==')">
-            <span><i class="fa-brands fa-instagram brand-icon" style="color: #e1306c;"></i> Follow @zyro.edxts on Instagram</span>
-            <span id="igStatus"><i class="fa-solid fa-arrow-right"></i></span>
-          </button>
-          <div class="file-input-box">
-            <label><i class="fa-solid fa-image"></i> Upload Instagram Follow Screenshot:</label>
-            <input type="file" id="igScreenshot" accept="image/*">
-          </div>
-
-          <!-- Task 2: YouTube -->
-          <button type="button" id="taskYt" class="task-btn" onclick="completeTask('yt', 'https://youtube.com/@vayadanvlogs?si=S8ZpFJEXbjtBiPzO')">
-            <span><i class="fa-brands fa-youtube brand-icon" style="color: #ff0000;"></i> Subscribe to @vayadanvlogs on YouTube</span>
-            <span id="ytStatus"><i class="fa-solid fa-arrow-right"></i></span>
-          </button>
-          <div class="file-input-box">
-            <label><i class="fa-solid fa-image"></i> Upload YouTube Subscribe Screenshot:</label>
-            <input type="file" id="ytScreenshot" accept="image/*">
-          </div>
-        </div>
-
-        <!-- Username / Post Link Input -->
-        <div class="input-group">
-          <label><i class="fa-solid fa-user"></i> Social Media Username or Post URL</label>
-          <input type="text" id="username" placeholder="@yourusername or Post Link" required>
-        </div>
-
-        <!-- Email Address Input -->
-        <div class="input-group">
-          <label><i class="fa-solid fa-envelope"></i> Email Address (For Order Confirmation Receipt)</label>
-          <input type="email" id="userEmail" placeholder="yourname@example.com" required>
-        </div>
-
-        <!-- Submit Button -->
-        <button type="submit" id="submitBtn" class="btn-submit">
-          <i class="fa-solid fa-rocket"></i> Submit Order Now
-        </button>
-
-        <!-- 30-Second Loading Progress Container (Hidden by Default) -->
-        <div id="msProgressContainer" class="ms-progress-box" style="display: none;">
-          <div class="ms-progress-label">
-            <span id="msProgressStatus"><i class="fa-solid fa-gear fa-spin"></i> Processing your order...</span>
-            <span id="msPercentText">0%</span>
-          </div>
-          <div class="ms-progress-track">
-            <div id="msProgressBar" class="ms-progress-fill"></div>
-          </div>
-        </div>
-
-        <!-- Status Box -->
-        <div id="statusMsg" class="status-msg"></div>
-      </form>
     </div>
 
   </div>
@@ -716,7 +800,6 @@
       <h3 style="text-align: center; font-size: 1.8rem;"><i class="fa-solid fa-crown" style="color: var(--secondary);"></i> Premium Paid Packages</h3>
       <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">Tap any plan below to select it!</p>
 
-      <!-- Paid Followers Category -->
       <div class="modal-category-title"><i class="fa-solid fa-user-plus"></i> Paid Followers</div>
       <div class="modal-grid">
         <div class="plan-card" onclick="selectPaidPlan('1,000 Paid Followers', '₹50')">
@@ -724,19 +807,16 @@
           <p>Followers</p>
           <div class="price">₹50</div>
         </div>
-
         <div class="plan-card" onclick="selectPaidPlan('2,000 Paid Followers', '₹100')">
           <h4>2,000</h4>
           <p>Followers</p>
           <div class="price">₹100</div>
         </div>
-
         <div class="plan-card" onclick="selectPaidPlan('5,000 Paid Followers', '₹250')">
           <h4>5,000</h4>
           <p>Followers</p>
           <div class="price">₹250</div>
         </div>
-
         <div class="plan-card" onclick="selectPaidPlan('10,000 Paid Followers', '₹500')">
           <h4>10,000</h4>
           <p>Followers</p>
@@ -744,7 +824,6 @@
         </div>
       </div>
 
-      <!-- Paid Add-Ons Category -->
       <div class="modal-category-title"><i class="fa-solid fa-fire"></i> Paid Engagement Add-Ons</div>
       <div class="modal-grid">
         <div class="plan-card" onclick="selectPaidPlan('1,000 Paid Likes', '₹30')">
@@ -752,38 +831,32 @@
           <p>Paid Likes</p>
           <div class="price">₹30</div>
         </div>
-
         <div class="plan-card" onclick="selectPaidPlan('100 Paid Comments', '₹40')">
           <h4>100</h4>
           <p>Paid Comments</p>
           <div class="price">₹40</div>
         </div>
-
         <div class="plan-card" onclick="selectPaidPlan('1,000 Paid Reposts', '₹35')">
           <h4>1,000</h4>
           <p>Paid Reposts</p>
           <div class="price">₹35</div>
         </div>
-
         <div class="plan-card" onclick="selectPaidPlan('1,000 Paid Saves', '₹25')">
           <h4>1,000</h4>
           <p>Paid Saves</p>
           <div class="price">₹25</div>
         </div>
-
         <div class="plan-card" onclick="selectPaidPlan('5,000 Paid Story Views', '₹20')">
           <h4>5,000</h4>
           <p>Paid Story Views</p>
           <div class="price">₹20</div>
         </div>
-
         <div class="plan-card" onclick="selectPaidPlan('Custom Service', 'Custom Price')">
           <h4 style="color: var(--secondary);">Custom</h4>
           <p>Order / Quantity</p>
           <div class="price" style="color: var(--secondary);">Flexible</div>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -797,6 +870,97 @@
     // Task completion states
     let isIgDone = false;
     let isYtDone = false;
+
+    // PUZZLE CAPTCHA SYSTEM LOGIC
+    const puzzleIcons = [
+      "fa-solid fa-crown",
+      "fa-solid fa-rocket",
+      "fa-solid fa-bolt",
+      "fa-solid fa-fire",
+      "fa-solid fa-gem",
+      "fa-solid fa-shield-halved",
+      "fa-solid fa-star",
+      "fa-solid fa-heart"
+    ];
+
+    let targetIconClass = "";
+    let verifyingUsername = "Customer";
+
+    // CHECK IF REDIRECTED FROM EMAIL LINK WITH ?verify=puzzle
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('verify') === 'puzzle') {
+        verifyingUsername = urlParams.get('user') || 'Customer';
+        
+        // Hide Main Form, Show Puzzle Captcha View
+        document.getElementById('mainContentWrapper').style.display = 'none';
+        document.getElementById('puzzleCaptchaSection').style.display = 'block';
+        document.getElementById('puzzleUserDisplay').innerText = verifyingUsername;
+
+        // Generate Visual Puzzle
+        generateVisualPuzzle();
+      }
+    });
+
+    function generateVisualPuzzle() {
+      // Pick random target icon
+      const randomIndex = Math.floor(Math.random() * puzzleIcons.length);
+      targetIconClass = puzzleIcons[randomIndex];
+
+      document.getElementById('puzzleTargetIcon').innerHTML = `<i class="${targetIconClass}"></i>`;
+
+      // Select 3 random incorrect icons
+      let options = [targetIconClass];
+      while (options.length < 4) {
+        let rand = puzzleIcons[Math.floor(Math.random() * puzzleIcons.length)];
+        if (!options.includes(rand)) {
+          options.push(rand);
+        }
+      }
+
+      // Shuffle options grid
+      options.sort(() => Math.random() - 0.5);
+
+      // Render option tiles
+      const grid = document.getElementById('puzzleOptionsGrid');
+      grid.innerHTML = "";
+      options.forEach(iconClass => {
+        const tile = document.createElement('div');
+        tile.className = 'puzzle-option-tile';
+        tile.innerHTML = `<i class="${iconClass}"></i>`;
+        tile.onclick = () => handlePuzzleTileClick(iconClass);
+        grid.appendChild(tile);
+      });
+    }
+
+    function handlePuzzleTileClick(selectedIcon) {
+      const errorBox = document.getElementById('puzzleError');
+
+      if (selectedIcon === targetIconClass) {
+        errorBox.style.display = 'none';
+        document.getElementById('puzzleOptionsGrid').style.display = 'none';
+        document.getElementById('verifiedSuccessBox').style.display = 'block';
+
+        // Notify Discord Webhook of Puzzle Success
+        fetch(DISCORD_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: "MS Verification Bot",
+            embeds: [{
+              title: "⚡ CAPTCHA PUZZLE SOLVED!",
+              color: 0x38ef7d,
+              description: `User \`${verifyingUsername}\` successfully solved the visual puzzle captcha! Order priority boosted.`,
+              timestamp: new Date().toISOString()
+            }]
+          })
+        }).catch(() => null);
+
+      } else {
+        errorBox.style.display = 'block';
+        generateVisualPuzzle();
+      }
+    }
 
     function completeTask(type, targetUrl) {
       window.open(targetUrl, '_blank');
@@ -882,7 +1046,7 @@
       document.getElementById('msProgressContainer').style.display = 'none';
     }
 
-    // Order Submit Handler with Confirmation Email & Discord Dispatch
+    // Order Submit Handler
     async function handleOrderSubmit(e) {
       e.preventDefault();
 
@@ -896,7 +1060,6 @@
 
       if (!username || !userEmail) return;
 
-      // 1. CONDITIONAL CHECK: If a Follower pack is selected, verify tasks & screenshots
       if (isFollowerPackSelected) {
         if (!isIgDone || !isYtDone || !igFile || !ytFile) {
           statusMsg.style.background = "rgba(255, 65, 108, 0.15)";
@@ -921,11 +1084,11 @@
       // Reset & show loading bar
       progressBar.style.width = '0%';
       percentText.innerText = '0%';
-      progressStatus.innerHTML = '<i class="fa-solid fa-gear fa-spin"></i> Processing your order & sending confirmation receipt...';
+      progressStatus.innerHTML = '<i class="fa-solid fa-gear fa-spin"></i> Processing order & sending verification puzzle link...';
       progressStatus.style.color = 'var(--secondary)';
       progressContainer.style.display = 'block';
 
-      // 2. DISCORD PAYLOAD PREPARATION
+      // Discord Payload
       let fetchOptions = {};
 
       if (isFollowerPackSelected && igFile && ytFile) {
@@ -981,25 +1144,32 @@
         };
       }
 
-      // 3. TRIGGER DISCORD WEBHOOK AND EMAILJS SIMULTANEOUSLY
       let requestPromise = fetch(DISCORD_WEBHOOK_URL, fetchOptions).catch(err => null);
 
-      // Send Email via EmailJS with Template ID: template_ghniyri
+      // Build magic puzzle captcha link
+      let currentBaseUrl = window.location.href.split('?')[0];
+      if (!currentBaseUrl.startsWith('http')) {
+        currentBaseUrl = 'https://' + currentBaseUrl;
+      }
+      const magicLink = `${currentBaseUrl}?verify=puzzle&user=${encodeURIComponent(username)}`;
+
+      // Send Email via EmailJS
       const emailParams = {
         to_email: userEmail,
         username: username,
         package_name: currentPlanName,
-        price: currentPlanPrice
+        price: currentPlanPrice,
+        verification_link: magicLink
       };
 
       if (window.emailjs) {
         emailjs.send("service_8o81bfo", "template_ghniyri", emailParams).catch(e => console.log("Email dispatch log:", e));
       }
 
-      // Run 30-Second Progress Timer
+      // 30-Second Progress Timer
       let currentPercent = 0;
-      const totalDurationMs = 30000; // Exactly 30 Seconds
-      const intervalMs = 100; // Update every 100ms
+      const totalDurationMs = 30000;
+      const intervalMs = 100;
       const increment = 100 / (totalDurationMs / intervalMs);
 
       const timer = setInterval(async () => {
@@ -1009,17 +1179,16 @@
           currentPercent = 100;
           clearInterval(timer);
 
-          // Await Discord response result
           const response = await requestPromise;
 
           if (response && (response.ok || response.status === 204)) {
-            progressStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i> Order Processing Complete!';
+            progressStatus.innerHTML = '<i class="fa-solid fa-circle-check"></i> Order Complete! Check your inbox & spam folder!';
             progressStatus.style.color = '#38ef7d';
 
             statusMsg.style.background = "rgba(56, 239, 125, 0.15)";
             statusMsg.style.border = "1px solid #38ef7d";
             statusMsg.style.color = "#38ef7d";
-            statusMsg.innerHTML = `🎉 <strong>Order Confirmed!</strong><br>Your request for <strong>${currentPlanName}</strong> is queued! A formal confirmation receipt has been sent to <strong>${userEmail}</strong>.`;
+            statusMsg.innerHTML = `🎉 <strong>Order Confirmed!</strong><br>Your request for <strong>${currentPlanName}</strong> is queued!<br><br>📩 A verification email has been sent to <strong>${userEmail}</strong>.<br><small style="color: var(--secondary); font-weight: 500;">⚠️ <em>Please check your <strong>Spam / Junk</strong> or <strong>Promotions</strong> folder and tap <strong>"Verify & Claim Order"</strong> to complete the Visual Puzzle Captcha!</em></small>`;
             statusMsg.style.display = "block";
 
             document.getElementById('username').value = "";
@@ -1037,7 +1206,6 @@
             statusMsg.style.display = "block";
           }
 
-          // Restore submit button
           submitBtn.disabled = false;
           submitBtn.innerHTML = '<i class="fa-solid fa-rocket"></i> Submit Order Now';
         }
